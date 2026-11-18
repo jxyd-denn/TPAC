@@ -1,0 +1,67 @@
+.register-form-wrap {
+    max-width: 500px;
+}
+
+.register-form-wrap .auth-heading {
+    margin-bottom: 24px;
+}
+
+.register-form-wrap .field-label {
+    margin-top: 13px;
+}
+
+.register-form-wrap .name-grid .field-label {
+    margin-top: 0;
+}
+
+.name-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.plain-input input,
+.plain-input select {
+    padding: 0 15px;
+}
+
+.plain-input select {
+    color: #18312d;
+    cursor: pointer;
+}
+
+.terms-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin: 17px 0 20px;
+    color: #71807b;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.terms-row input {
+    width: 16px;
+    height: 16px;
+    margin: 1px 0 0;
+    accent-color: #26776d;
+}
+
+.terms-row button {
+    border: 0;
+    padding: 0;
+    background: none;
+    color: #26776d;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+@media (max-width: 520px) {
+    .name-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-heading h2 {
+        font-size: 32px;
+    }
+}
