@@ -61,6 +61,10 @@
     transform: none;
 }
 
+.register-form-wrap .primary-button {
+    margin-top: 20px;
+}
+
 @media (max-width: 520px) {
     .name-grid {
         grid-template-columns: 1fr;
