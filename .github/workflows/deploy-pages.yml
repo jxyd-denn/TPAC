@@ -27,6 +27,20 @@ jobs:
           node-version: 20
           cache: npm
 
+      - name: Validate Supabase variables
+        run: |
+          if [ -z "$VITE_SUPABASE_URL" ]; then
+            echo "Missing VITE_SUPABASE_URL GitHub Actions secret"
+            exit 1
+          fi
+          if [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo "Missing VITE_SUPABASE_PUBLISHABLE_KEY GitHub Actions secret"
+            exit 1
+          fi
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+
       - name: Install dependencies
         run: npm ci
 
