@@ -1,12 +1,49 @@
 import { useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
+import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import './Register.css'
 
 function Register({ onSwitch }) {
   const [showPassword, setShowPassword] = useState(false)
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [clubRole, setClubRole] = useState('')
+  const [password, setPassword] = useState('')
+  const [status, setStatus] = useState({ type: '', message: '' })
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
+    setStatus({ type: '', message: '' })
+
+    if (!isSupabaseConfigured || !supabase) {
+      setStatus({ type: 'error', message: 'Supabase is not configured yet.' })
+      return
+    }
+
+    setStatus({ type: 'loading', message: 'Creating account...' })
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+          club_role: clubRole,
+        },
+      },
+    })
+
+    if (error) {
+      setStatus({ type: 'error', message: error.message })
+      return
+    }
+
+    setStatus({
+      type: 'success',
+      message: 'Account created. Check your email if confirmation is required.',
+    })
   }
 
   return (
@@ -23,13 +60,13 @@ function Register({ onSwitch }) {
             <div>
               <label className="field-label" htmlFor="first-name">First name</label>
               <div className="input-wrap plain-input">
-                <input id="first-name" type="text" placeholder="Jayden" required />
+                <input id="first-name" type="text" value={firstName} onChange={(event) => setFirstName(event.target.value)} placeholder="Jayden" required />
               </div>
             </div>
             <div>
               <label className="field-label" htmlFor="last-name">Last name</label>
               <div className="input-wrap plain-input">
-                <input id="last-name" type="text" placeholder="Tan" required />
+                <input id="last-name" type="text" value={lastName} onChange={(event) => setLastName(event.target.value)} placeholder="Tan" required />
               </div>
             </div>
           </div>
@@ -37,12 +74,12 @@ function Register({ onSwitch }) {
           <label className="field-label" htmlFor="register-email">Email address</label>
           <div className="input-wrap">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11Z"/><path d="m4 6 8 6 8-6"/></svg>
-            <input id="register-email" type="email" placeholder="you@example.com" required />
+            <input id="register-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" required />
           </div>
 
           <label className="field-label" htmlFor="club-role">Club role</label>
           <div className="input-wrap plain-input">
-            <select id="club-role" defaultValue="" required>
+            <select id="club-role" value={clubRole} onChange={(event) => setClubRole(event.target.value)} required>
               <option value="" disabled>Select your role</option>
               <option>MC</option>
               <option>Committee Member</option>
@@ -54,16 +91,19 @@ function Register({ onSwitch }) {
           <label className="field-label" htmlFor="register-password">Password</label>
           <div className="input-wrap">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-            <input id="register-password" type={showPassword ? 'text' : 'password'} placeholder="Create a password" minLength="8" required />
+            <input id="register-password" type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Create a password" minLength="8" required />
             <button className="show-password" type="button" onClick={() => setShowPassword((shown) => !shown)}>{showPassword ? 'Hide' : 'Show'}</button>
           </div>
 
           <label className="terms-row">
             <input type="checkbox" required />
-            <span>I agree to the <button type="button">Terms of Use</button> and <button type="button">Privacy Policy</button>.</span>
+            <span>I agree to the Terms of Use and Privacy Policy.</span>
           </label>
 
-          <button className="primary-button" type="submit">Create account <span aria-hidden="true">→</span></button>
+          {status.message && <p className={`auth-status ${status.type}`}>{status.message}</p>}
+          <button className="primary-button" type="submit" disabled={status.type === 'loading'}>
+            {status.type === 'loading' ? 'Creating account...' : 'Create account'} <span aria-hidden="true">→</span>
+          </button>
         </form>
 
         <p className="switch-copy">Already have an account? <button type="button" onClick={onSwitch}>Sign in</button></p>

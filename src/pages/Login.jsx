@@ -1,14 +1,32 @@
 import { useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
+import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import './Login.css'
 
 function Login({ onSwitch }) {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [status, setStatus] = useState({ type: '', message: '' })
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
+    setStatus({ type: '', message: '' })
+
+    if (!isSupabaseConfigured || !supabase) {
+      setStatus({ type: 'error', message: 'Supabase is not configured yet.' })
+      return
+    }
+
+    setStatus({ type: 'loading', message: 'Signing in...' })
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+
+    if (error) {
+      setStatus({ type: 'error', message: error.message })
+      return
+    }
+
+    setStatus({ type: 'success', message: 'Signed in successfully.' })
   }
 
   return (
@@ -44,7 +62,10 @@ function Login({ onSwitch }) {
             <span>Keep me signed in</span>
           </label>
 
-          <button className="primary-button" type="submit">Sign in <span aria-hidden="true">→</span></button>
+          {status.message && <p className={`auth-status ${status.type}`}>{status.message}</p>}
+          <button className="primary-button" type="submit" disabled={status.type === 'loading'}>
+            {status.type === 'loading' ? 'Signing in...' : 'Sign in'} <span aria-hidden="true">→</span>
+          </button>
         </form>
 
         <p className="switch-copy">New to TPAC Timeline? <button type="button" onClick={onSwitch}>Create an account</button></p>
