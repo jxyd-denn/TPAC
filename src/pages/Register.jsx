@@ -75,10 +75,9 @@ function Register({ onSwitch, onRegister }) {
           <div className="input-wrap plain-input">
             <select id="club-role" value={clubRole} onChange={(event) => setClubRole(event.target.value)} required>
               <option value="" disabled>Select your role</option>
-              <option>MC</option>
-              <option>Committee Member</option>
-              <option>Instructor</option>
-              <option>Member</option>
+              <option>Main Committee Member</option>
+              <option>Sub Committee Member</option>
+              <option>Advisor/SDAA</option>
             </select>
           </div>
 

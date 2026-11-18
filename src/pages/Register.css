@@ -30,31 +30,6 @@
     cursor: pointer;
 }
 
-.terms-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 9px;
-    margin: 17px 0 20px;
-    color: #71807b;
-    font-size: 13px;
-    line-height: 1.45;
-}
-
-.terms-row input {
-    width: 16px;
-    height: 16px;
-    margin: 1px 0 0;
-    accent-color: #26776d;
-}
-
-.terms-row button {
-    border: 0;
-    padding: 0;
-    background: none;
-    color: #26776d;
-    font-weight: 800;
-    cursor: pointer;
-}
 
 .auth-status {
     margin: 0 0 14px;
