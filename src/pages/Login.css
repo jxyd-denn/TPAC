@@ -176,3 +176,33 @@
     font-weight: 800;
     cursor: pointer;
 }
+
+.auth-status {
+    margin: 0 0 14px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: left;
+}
+
+.auth-status.error {
+    background: #fff1f0;
+    color: #a33b32;
+}
+
+.auth-status.success {
+    background: #edf7f3;
+    color: #26776d;
+}
+
+.auth-status.loading {
+    background: #f1f5f3;
+    color: #667770;
+}
+
+.primary-button:disabled {
+    cursor: wait;
+    opacity: 0.7;
+    transform: none;
+}

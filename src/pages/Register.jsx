@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
-import { isSupabaseConfigured, supabase } from '../lib/supabase'
+import { registerAccount } from '../apis/authApi'
 import './Register.css'
 
-function Register({ onSwitch }) {
+function Register({ onSwitch, onRegister }) {
   const [showPassword, setShowPassword] = useState(false)
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -15,35 +15,29 @@ function Register({ onSwitch }) {
   async function handleSubmit(event) {
     event.preventDefault()
     setStatus({ type: '', message: '' })
-
-    if (!isSupabaseConfigured || !supabase) {
-      setStatus({ type: 'error', message: 'Supabase is not configured yet.' })
-      return
-    }
-
     setStatus({ type: 'loading', message: 'Creating account...' })
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          first_name: firstName,
-          last_name: lastName,
-          club_role: clubRole,
-        },
-      },
-    })
+    try {
+      const result = await registerAccount({
+        email,
+        password,
+        firstName,
+        lastName,
+        clubRole,
+      })
 
-    if (error) {
+      if (result.session) {
+        onRegister?.()
+        return
+      }
+
+      setStatus({
+        type: 'success',
+        message: 'Account created. Check your email to confirm it before signing in.',
+      })
+    } catch (error) {
       setStatus({ type: 'error', message: error.message })
-      return
     }
-
-    setStatus({
-      type: 'success',
-      message: 'Account created. Check your email if confirmation is required.',
-    })
   }
 
   return (
@@ -66,7 +60,7 @@ function Register({ onSwitch }) {
             <div>
               <label className="field-label" htmlFor="last-name">Last name</label>
               <div className="input-wrap plain-input">
-                <input id="last-name" type="text" value={lastName} onChange={(event) => setLastName(event.target.value)} placeholder="Tan" required />
+                <input id="last-name" type="text" value={lastName} onChange={(event) => setLastName(event.target.value)} placeholder="Ngai" required />
               </div>
             </div>
           </div>
@@ -94,11 +88,6 @@ function Register({ onSwitch }) {
             <input id="register-password" type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Create a password" minLength="8" required />
             <button className="show-password" type="button" onClick={() => setShowPassword((shown) => !shown)}>{showPassword ? 'Hide' : 'Show'}</button>
           </div>
-
-          <label className="terms-row">
-            <input type="checkbox" required />
-            <span>I agree to the Terms of Use and Privacy Policy.</span>
-          </label>
 
           {status.message && <p className={`auth-status ${status.type}`}>{status.message}</p>}
           <button className="primary-button" type="submit" disabled={status.type === 'loading'}>

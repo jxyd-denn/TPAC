@@ -1,0 +1,42 @@
+.home-page {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: #f8faf7;
+}
+
+.home-page section {
+    width: min(560px, 100%);
+    padding: 40px;
+    border: 1px solid #e1e8e4;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 18px 50px rgba(31, 113, 103, 0.08);
+}
+
+.home-page h1 {
+    margin: 8px 0 12px;
+    color: #17362f;
+    font-family: Georgia, 'Times New Roman', serif;
+}
+
+.home-kicker {
+    margin: 0;
+    color: #26776d;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.home-page button {
+    margin-top: 24px;
+    border: 0;
+    border-radius: 9px;
+    padding: 12px 18px;
+    background: #1f7167;
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+}

@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
-import { isSupabaseConfigured, supabase } from '../lib/supabase'
+import { loginAccount } from '../apis/authApi'
 import './Login.css'
 
-function Login({ onSwitch }) {
+function Login({ onSwitch, onLogin }) {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -12,21 +12,15 @@ function Login({ onSwitch }) {
   async function handleSubmit(event) {
     event.preventDefault()
     setStatus({ type: '', message: '' })
-
-    if (!isSupabaseConfigured || !supabase) {
-      setStatus({ type: 'error', message: 'Supabase is not configured yet.' })
-      return
-    }
-
     setStatus({ type: 'loading', message: 'Signing in...' })
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
 
-    if (error) {
+    try {
+      await loginAccount({ email, password })
+      setStatus({ type: 'success', message: 'Signed in successfully.' })
+      onLogin?.()
+    } catch (error) {
       setStatus({ type: 'error', message: error.message })
-      return
     }
-
-    setStatus({ type: 'success', message: 'Signed in successfully.' })
   }
 
   return (
