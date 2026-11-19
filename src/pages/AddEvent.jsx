@@ -107,7 +107,7 @@ function AddEvent({ onBack, onCreated, initialScope }) {
 
         <form className="event-form" onSubmit={handleSubmit} noValidate>
           <fieldset className="scope-toggle">
-            <legend>Scope</legend>
+            <legend>Category</legend>
             <div>
               <button type="button" className={scopeType === 'event' ? 'active' : ''} onClick={() => changeScopeType('event')}>For an event</button>
               <button type="button" className={scopeType === 'department' ? 'active' : ''} onClick={() => changeScopeType('department')}>For a department</button>

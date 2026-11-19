@@ -3,7 +3,8 @@ import { getCurrentProfile, logoutAccount } from '../apis/authApi'
 import { getTimelineDates } from '../apis/timelineDatesApi'
 import TimelineHeader from '../components/TimelineHeader'
 import TimelineFilters from '../components/TimelineFilters'
-import TimelineDateCard from '../components/TimelineDateCard'
+import SwimlaneTimeline from '../components/SwimlaneTimeline'
+import GeneralTimeline from '../components/GeneralTimeline'
 import { EVENT_OPTIONS, EVENT_TYPES, DEPARTMENT_TYPES } from '../constants/timelineOptions'
 import './Home.css'
 
@@ -84,7 +85,7 @@ function Home({ onLogout, onAddDate }) {
         <div className="timeline-heading">
           <div>
             <p className="home-kicker">Club schedule</p>
-            <h1>Horizontal timeline</h1>
+            <h1>Timeline for AY 26/27</h1>
           </div>
         </div>
 
@@ -110,22 +111,11 @@ function Home({ onLogout, onAddDate }) {
             <button type="button" onClick={() => onAddDate?.()}>Add the first date</button>
           </div>
         ) : (
-          <div className="horizontal-timeline-wrap">
-            <div className="horizontal-timeline-track" aria-hidden="true" />
-            <div className="horizontal-timeline">
-              {visibleDates.map((item) => {
-                const scope = scopes.find((scopeItem) => scopeItem.id === item.scope_id)
-                return (
-                  <TimelineDateCard
-                    key={item.id}
-                    item={{ ...item, color: scope?.color || item.color }}
-                    scopeLabel={scope?.label || 'Department'}
-                    onQuickAdd={() => onAddDate?.({ scopeType: 'event', scopeId: item.scope_id })}
-                  />
-                )
-              })}
-            </div>
-          </div>
+          <GeneralTimeline
+            items={visibleDates}
+            scopes={scopes}
+            onQuickAdd={onAddDate}
+          />
         )}
       </section>
     </main>

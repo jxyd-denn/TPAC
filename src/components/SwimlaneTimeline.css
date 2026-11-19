@@ -1,0 +1,283 @@
+.swimlane-section {
+    position: relative;
+}
+
+.swimlane-toolbar {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.swimlane-toolbar strong {
+    color: #17362f;
+}
+
+.axis-label {
+    margin: 0 0 3px;
+    color: #84918d;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 800;
+}
+
+.range-toggle {
+    display: flex;
+    border: 1px solid #dfe7e2;
+    border-radius: 9px;
+    padding: 3px;
+    background: white;
+}
+
+.range-toggle button {
+    border: 0;
+    border-radius: 6px;
+    padding: 7px 10px;
+    background: transparent;
+    color: #71807b;
+    cursor: pointer;
+}
+
+.range-toggle button.active {
+    background: #26776d;
+    color: white;
+    font-weight: 800;
+}
+
+.swimlane-scroll {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e1e7e3;
+    border-radius: 12px;
+    background: white;
+}
+
+.swimlane-grid {
+    min-width: var(--axis-width);
+}
+
+.axis-header {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    height: 56px;
+    border-bottom: 1px solid #edf1ee;
+}
+
+.lane-label-spacer {
+    display: flex;
+    align-items: end;
+    padding: 0 14px 10px;
+    color: #84918d;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.month-axis {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+}
+
+.month-span {
+    display: flex;
+    align-items: end;
+    padding: 0 8px 10px;
+    border-left: 1px solid #edf1ee;
+    color: #71807b;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.month-span.alternate {
+    background: #fafbf9;
+}
+
+.today-line {
+    position: absolute;
+    z-index: 4;
+    top: 0;
+    bottom: -210px;
+    width: 2px;
+    background: #d45d55;
+    pointer-events: none;
+}
+
+.today-line span {
+    position: absolute;
+    top: -18px;
+    left: 5px;
+    color: #d45d55;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.swimlane-row {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    min-height: 62px;
+    border-bottom: 1px solid #edf1ee;
+}
+
+.swimlane-row:last-child {
+    border-bottom: 0;
+}
+
+.lane-label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 14px;
+    border-right: 1px solid #edf1ee;
+    background: white;
+}
+
+.lane-label strong {
+    font-size: 12px;
+    line-height: 1.25;
+}
+
+.lane-color {
+    flex: 0 0 auto;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+
+.lane-track {
+    position: relative;
+    border-left: 1px solid #edf1ee;
+}
+
+.lane-track::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: #edf1ee;
+}
+
+.lane-span {
+    position: absolute;
+    top: calc(50% - 3px);
+    height: 6px;
+    border-radius: 999px;
+    opacity: .28;
+}
+
+.date-dot,
+.cluster-dot {
+    position: absolute;
+    z-index: 3;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border: 3px solid white;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(20, 50, 44, .16);
+}
+
+.date-dot {
+    width: 26px;
+    height: 26px;
+    background: var(--dot-color);
+}
+
+.date-dot span {
+    display: grid;
+    height: 100%;
+    place-items: center;
+    font-size: 11px;
+}
+
+.cluster-dot {
+    min-width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    padding: 0 6px;
+    font-size: 10px;
+    font-weight: 900;
+}
+
+.date-dot.past,
+.cluster-dot.past {
+    filter: grayscale(.45);
+    opacity: .48;
+}
+
+.timeline-detail-card {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 20;
+    width: min(320px, calc(100vw - 48px));
+    max-height: 70vh;
+    overflow-y: auto;
+    border: 1px solid #dfe7e2;
+    border-radius: 12px;
+    padding: 18px;
+    background: white;
+    box-shadow: 0 18px 50px rgba(20, 50, 44, .18);
+}
+
+.detail-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border: 0;
+    background: none;
+    color: #71807b;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.detail-lane {
+    margin: 0 24px 10px 0;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.detail-item {
+    border-top: 1px solid #edf1ee;
+    padding: 10px 0;
+}
+
+.detail-item strong,
+.detail-item span {
+    display: block;
+}
+
+.detail-item span {
+    margin-top: 4px;
+    color: #71807b;
+    font-size: 12px;
+}
+
+.detail-item p {
+    margin: 5px 0 0;
+    color: #71807b;
+    font-size: 12px;
+}
+
+.detail-item button {
+    margin-top: 8px;
+    border: 0;
+    padding: 0;
+    background: none;
+    color: #26776d;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+@media (max-width: 620px) {
+    .swimlane-toolbar {
+        align-items: start;
+        flex-direction: column;
+    }
+}

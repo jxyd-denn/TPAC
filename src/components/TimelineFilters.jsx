@@ -17,10 +17,10 @@ function TimelineFilters({ scopes, types, activeScopes, activeTypes, onToggleSco
         />
       </div>
 
-      <div className="filter-columns">
-        <div className="filter-group">
+      <div className="compact-filter-row">
+        <div className="filter-group event-filter-group">
           <p>Events</p>
-          <div className="chip-row">
+          <div className="chip-row event-chip-row">
             {scopes.map((scope) => (
               <button key={scope.id} type="button" className={`filter-chip ${activeScopes.includes(scope.id) ? 'active' : ''}`} onClick={() => onToggleScope(scope.id)}>
                 <span style={{ background: scope.color }} />{scope.label}
@@ -29,13 +29,24 @@ function TimelineFilters({ scopes, types, activeScopes, activeTypes, onToggleSco
           </div>
         </div>
 
-        <div className="filter-group">
-          <p>Type</p>
-          <div className="chip-row">
-            {types.map((type) => (
-              <button key={type} type="button" className={`filter-chip ${activeTypes.includes(type) ? 'active' : ''}`} onClick={() => onToggleType(type)}>{type}</button>
-            ))}
-          </div>
+        <div className="filter-group type-filter-group">
+          <label htmlFor="type-filter">Type</label>
+          <select
+            id="type-filter"
+            value={activeTypes[0] || ''}
+            onChange={(event) => {
+              const selected = event.target.value
+              if (!selected) {
+                activeTypes.forEach((type) => onToggleType(type))
+              } else {
+                activeTypes.forEach((type) => onToggleType(type))
+                onToggleType(selected)
+              }
+            }}
+          >
+            <option value="">All types</option>
+            {types.map((type) => <option key={type} value={type}>{type}</option>)}
+          </select>
         </div>
       </div>
 

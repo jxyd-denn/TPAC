@@ -7,30 +7,31 @@ function formatTime(time) {
   return date.toLocaleTimeString('en-SG', { hour: 'numeric', minute: '2-digit' })
 }
 
-function TimelineDateCard({ item, scopeLabel, onQuickAdd }) {
+function TimelineDateCard({ item, scopeLabel, position, onQuickAdd }) {
   const date = new Date(`${item.date_value}T00:00:00`)
 
   return (
-    <article className="horizontal-date-card" style={{ '--event-color': item.color || '#26776d' }}>
-      <div className="date-marker">
-        <span>{date.toLocaleDateString('en-SG', { month: 'short' }).toUpperCase()}</span>
-        <strong>{date.getDate()}</strong>
-        <small>{date.getFullYear()}</small>
-      </div>
-      <div className="date-card-content">
-        <div className="date-card-topline">
-          <span className="date-type">{item.date_type}</span>
-          <span className="scope-label">{scopeLabel}</span>
-        </div>
-        <h3>{item.title}</h3>
+    <article
+      className="year-date-marker"
+      style={{ '--marker-position': `${position}%`, '--event-color': item.color || '#26776d' }}
+    >
+      <button
+        type="button"
+        className="year-marker-dot"
+        aria-label={`${item.title}, ${date.toLocaleDateString()}`}
+        onClick={onQuickAdd}
+      />
+      <div className="year-marker-label">
+        <span>{date.toLocaleDateString('en-SG', { day: 'numeric', month: 'short' })}</span>
+        <strong>{item.title}</strong>
+        <small>{item.date_type}{scopeLabel ? ` · ${scopeLabel}` : ''}</small>
         {(item.time_value || item.location) && (
-          <p className="date-meta">
-            {item.time_value && <span>{formatTime(item.time_value)}</span>}
-            {item.location && <span>{item.location}</span>}
+          <p>
+            {item.time_value ? formatTime(item.time_value) : ''}
+            {item.time_value && item.location ? ' · ' : ''}
+            {item.location || ''}
           </p>
         )}
-        {item.notes && <p className="date-notes">{item.notes}</p>}
-        {onQuickAdd && <button type="button" className="quick-add" onClick={onQuickAdd}>+ Add date</button>}
       </div>
     </article>
   )

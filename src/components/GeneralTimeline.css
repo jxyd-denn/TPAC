@@ -1,0 +1,306 @@
+:root {
+    --timeline-bg: #ffffff;
+    --timeline-surface: #f8faf7;
+    --timeline-border: #dfe7e2;
+    --timeline-grid: #edf1ee;
+    --timeline-text: #18312d;
+    --timeline-muted: #71807b;
+    --timeline-accent: #26776d;
+    --timeline-today: #d45d55;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --timeline-bg: #171c1a;
+        --timeline-surface: #202724;
+        --timeline-border: #34413c;
+        --timeline-grid: #29332f;
+        --timeline-text: #edf5f1;
+        --timeline-muted: #aebbb5;
+        --timeline-accent: #74b7aa;
+    }
+}
+
+.general-timeline {
+    position: relative;
+}
+
+.general-timeline-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.zoom-controls {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--timeline-border);
+    border-radius: 9px;
+    background: var(--timeline-bg);
+}
+
+.zoom-controls button,
+.today-button {
+    height: 36px;
+    border: 0;
+    background: transparent;
+    color: var(--timeline-accent);
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.zoom-controls button {
+    width: 36px;
+}
+
+.zoom-controls button:disabled {
+    opacity: .35;
+    cursor: default;
+}
+
+.zoom-controls span {
+    min-width: 68px;
+    text-align: center;
+    color: var(--timeline-muted);
+    font-size: 12px;
+}
+
+.today-button {
+    border: 1px solid var(--timeline-border);
+    border-radius: 9px;
+    padding: 0 12px;
+    background: var(--timeline-bg);
+}
+
+.general-timeline-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: 1px solid var(--timeline-border);
+    border-radius: 12px;
+    background: var(--timeline-bg);
+    touch-action: pan-x pan-y;
+}
+
+.general-timeline-grid {
+    position: relative;
+    min-width: 100%;
+}
+
+.general-month-header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    height: 46px;
+    border-bottom: 1px solid var(--timeline-border);
+    background: var(--timeline-bg);
+}
+
+.general-month {
+    position: absolute;
+    top: 0;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    border-left: 1px solid var(--timeline-border);
+    color: var(--timeline-muted);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.general-month.alternate {
+    background: var(--timeline-surface);
+}
+
+.general-timeline-body {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 46px;
+    bottom: 0;
+}
+
+.general-gridline {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-left: 1px solid var(--timeline-grid);
+}
+
+.general-gridline.alternate {
+    background: color-mix(in srgb, var(--timeline-surface) 45%, transparent);
+}
+
+.general-today-line {
+    position: absolute;
+    z-index: 4;
+    top: 0;
+    width: 2px;
+    height: 46px;
+    background: var(--timeline-today);
+}
+
+.general-today-line span {
+    position: absolute;
+    top: 5px;
+    left: 6px;
+    color: var(--timeline-today);
+    font-size: 10px;
+    font-weight: 900;
+}
+
+.general-today-line.body {
+    height: 100%;
+}
+
+.general-date-pill {
+    position: absolute;
+    z-index: 3;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid color-mix(in srgb, var(--pill-event) 32%, var(--timeline-border));
+    border-left: 5px solid var(--pill-event);
+    border-radius: 8px;
+    padding: 4px 8px;
+    background: color-mix(in srgb, var(--pill-event) 10%, var(--timeline-bg));
+    color: var(--timeline-text);
+    text-align: left;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(20, 50, 44, .06);
+}
+
+.general-date-pill.past {
+    opacity: .55;
+    filter: saturate(.65);
+}
+
+.general-date-pill:hover {
+    filter: none;
+    box-shadow: 0 6px 16px rgba(20, 50, 44, .14);
+    transform: translateY(-1px);
+}
+
+.pill-icon {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--pill-event) 16%, var(--timeline-bg));
+    color: var(--pill-event);
+}
+
+.pill-copy {
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.pill-copy strong {
+    max-width: 112px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pill-copy small {
+    flex: 0 0 auto;
+    color: var(--timeline-muted);
+}
+
+.general-detail-card {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 30;
+    width: min(340px, calc(100vw - 48px));
+    max-height: 72vh;
+    overflow-y: auto;
+    border: 1px solid var(--timeline-border);
+    border-radius: 12px;
+    padding: 20px;
+    background: var(--timeline-bg);
+    color: var(--timeline-text);
+    box-shadow: 0 18px 50px rgba(20, 50, 44, .18);
+}
+
+.detail-close {
+    position: absolute;
+    right: 12px;
+    top: 8px;
+    border: 0;
+    background: none;
+    color: var(--timeline-muted);
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.detail-kicker {
+    margin: 0 30px 5px 0;
+    color: var(--timeline-accent);
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.general-detail-card h2 {
+    margin: 0 0 14px;
+}
+
+.general-detail-card dl {
+    margin: 0;
+}
+
+.general-detail-card dl div {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 8px;
+    border-top: 1px solid var(--timeline-border);
+    padding: 8px 0;
+}
+
+.general-detail-card dt {
+    color: var(--timeline-muted);
+}
+
+.general-detail-card dd {
+    margin: 0;
+}
+
+.availability-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-top: 14px;
+}
+
+.availability-actions button {
+    min-height: 36px;
+    border: 1px solid var(--timeline-border);
+    border-radius: 8px;
+    background: var(--timeline-bg);
+    color: var(--timeline-text);
+    cursor: pointer;
+}
+
+.availability-actions button.active {
+    border-color: var(--timeline-accent);
+    background: color-mix(in srgb, var(--timeline-accent) 12%, var(--timeline-bg));
+}
+
+.detail-add-button {
+    margin-top: 12px;
+    border: 0;
+    padding: 0;
+    background: none;
+    color: var(--timeline-accent);
+    font-weight: 800;
+    cursor: pointer;
+}
