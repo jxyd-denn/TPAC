@@ -6,7 +6,7 @@ export const EVENT_OPTIONS = [{
     },
     {
         id: '22222222-2222-4222-8222-222222222222',
-        title: 'P10 Collaboration',
+        title: 'P10 Collab',
         color: '#4f75a9'
     },
     {
@@ -15,7 +15,7 @@ export const EVENT_OPTIONS = [{
         color: '#c89536'
     }, {
         id: '44444444-4444-4444-8444-444444444444',
-        title: 'Student Freshman Orientation (SUFO)',
+        title: 'SUFO',
         color: '#c86a5b'
     },
     {
@@ -25,7 +25,7 @@ export const EVENT_OPTIONS = [{
     },
     {
         id: '66666666-6666-4666-8666-666666666666',
-        title: 'AC x SC Collaboration (Route Royale)',
+        title: 'Route Royale',
         color: '#26776d'
     },
     {
