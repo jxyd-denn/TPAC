@@ -5,7 +5,7 @@ import TimelineHeader from '../components/TimelineHeader'
 import TimelineFilters from '../components/TimelineFilters'
 import SwimlaneTimeline from '../components/SwimlaneTimeline'
 import GeneralTimeline from '../components/GeneralTimeline'
-import { EVENT_OPTIONS, EVENT_TYPES, DEPARTMENT_TYPES } from '../constants/timelineOptions'
+import { EVENT_OPTIONS, DEPARTMENT_OPTIONS, EVENT_TYPES, DEPARTMENT_TYPES } from '../constants/timelineOptions'
 import './Home.css'
 
 function Home({ onLogout, onAddDate }) {
@@ -13,6 +13,7 @@ function Home({ onLogout, onAddDate }) {
   const [dates, setDates] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeScopes, setActiveScopes] = useState([])
+  const [activeDepartments, setActiveDepartments] = useState([])
   const [activeTypes, setActiveTypes] = useState([])
   const [onlyMine, setOnlyMine] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -35,6 +36,7 @@ function Home({ onLogout, onAddDate }) {
   function clearAllFilters() {
     setSearchQuery('')
     setActiveScopes([])
+    setActiveDepartments([])
     setActiveTypes([])
     setOnlyMine(false)
   }
@@ -43,6 +45,12 @@ function Home({ onLogout, onAddDate }) {
     setActiveScopes((current) => current.includes(scopeId)
       ? current.filter((id) => id !== scopeId)
       : [...current, scopeId])
+  }
+
+  function toggleDepartment(departmentId) {
+    setActiveDepartments((current) => current.includes(departmentId)
+      ? current.filter((id) => id !== departmentId)
+      : [...current, departmentId])
   }
 
   function toggleType(type) {
@@ -61,10 +69,18 @@ function Home({ onLogout, onAddDate }) {
     color: event.color || '#26776d',
   }))
 
+  const departments = DEPARTMENT_OPTIONS.map((department) => ({
+    id: department.id,
+    label: department.name,
+    color: department.color,
+  }))
+
   const types = [...new Set([...EVENT_TYPES, ...DEPARTMENT_TYPES])]
 
   const visibleDates = dates.filter((item) => {
-    const scopeMatches = activeScopes.length === 0 || activeScopes.includes(item.scope_id)
+    const scopeMatches = item.scope_type === 'department'
+      ? (activeDepartments.length === 0 || activeDepartments.includes(item.scope_id))
+      : (activeScopes.length === 0 || activeScopes.includes(item.scope_id))
     const typeMatches = activeTypes.length === 0 || activeTypes.includes(item.date_type)
     const mineMatches = !onlyMine || (
       Array.isArray(item.organizer_ids) && item.organizer_ids.includes(profile?.id)
@@ -93,10 +109,12 @@ function Home({ onLogout, onAddDate }) {
 
         <TimelineFilters
           scopes={scopes}
-          types={types}
+          departments={departments}
+          activeDepartments={activeDepartments}
           activeScopes={activeScopes}
           activeTypes={activeTypes}
           onToggleScope={toggleScope}
+          onToggleDepartment={toggleDepartment}
           onToggleType={toggleType}
           onlyMine={onlyMine}
           onOnlyMineChange={setOnlyMine}

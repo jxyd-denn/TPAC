@@ -1,6 +1,6 @@
 import './TimelineFilters.css'
 
-function TimelineFilters({ scopes, types, activeScopes, activeTypes, onToggleScope, onToggleType, onlyMine, onOnlyMineChange, searchQuery, onSearchChange, onClearAll }) {
+function TimelineFilters({ scopes, departments = [], types, activeScopes, activeDepartments = [], activeTypes, onToggleScope, onToggleDepartment, onToggleType, onlyMine, onOnlyMineChange, searchQuery, onSearchChange, onClearAll }) {
   return (
     <div className="timeline-filters">
       <div className="search-filter">
@@ -24,6 +24,17 @@ function TimelineFilters({ scopes, types, activeScopes, activeTypes, onToggleSco
             {scopes.map((scope) => (
               <button key={scope.id} type="button" className={`filter-chip ${activeScopes.includes(scope.id) ? 'active' : ''}`} onClick={() => onToggleScope(scope.id)}>
                 <span style={{ background: scope.color }} />{scope.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="filter-group department-filter-group">
+          <p>Departments</p>
+          <div className="chip-row department-chip-row">
+            {departments.map((department) => (
+              <button key={department.id} type="button" className={`filter-chip ${activeDepartments.includes(department.id) ? 'active' : ''}`} onClick={() => onToggleDepartment(department.id)}>
+                <span style={{ background: department.color }} />{department.label}
               </button>
             ))}
           </div>
