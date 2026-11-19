@@ -1,0 +1,67 @@
+.timeline-filters {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) auto;
+    gap: 18px;
+    align-items: end;
+    margin-bottom: 28px;
+}
+
+.filter-group p {
+    margin: 0 0 8px;
+    color: #71807b;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter-chip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid #dfe7e2;
+    border-radius: 999px;
+    padding: 8px 12px;
+    background: white;
+    color: #586963;
+    cursor: pointer;
+}
+
+.filter-chip>span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.filter-chip.active {
+    border-color: #26776d;
+    background: #edf6f2;
+    color: #26776d;
+    font-weight: 800;
+}
+
+.mine-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    color: #586963;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.mine-toggle input {
+    accent-color: #26776d;
+}
+
+@media (max-width: 760px) {
+    .timeline-filters {
+        grid-template-columns: 1fr;
+    }
+}

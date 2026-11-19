@@ -15,6 +15,7 @@
 }
 
 .back-button {
+    margin-bottom: 24px;
     border: 0;
     background: none;
     color: #26776d;
@@ -84,54 +85,71 @@
     outline: none;
 }
 
+.event-form select,
+.event-form input,
 .event-form textarea {
+    width: 100%;
+    border: 1px solid #dce5df;
+    border-radius: 10px;
+    background: white;
+    color: #18312d;
+    outline: none;
+}
+
+.event-form select,
+.event-form input {
+    height: 48px;
+    margin-bottom: 6px;
+    padding: 0 14px;
+}
+
+.event-form textarea {
+    margin-bottom: 8px;
+    padding: 12px 14px;
     resize: vertical;
 }
 
-.event-form input:focus,
-.event-form textarea:focus {
-    border-color: #35877c;
-    box-shadow: 0 0 0 3px rgba(53, 135, 124, .10);
+.event-form label>span {
+    color: #84918d;
+    font-weight: 500;
 }
 
-.event-form fieldset {
-    border: 0;
-    margin: 0 0 20px;
-    padding: 0;
+.field-error {
+    margin: 2px 0 12px;
+    color: #a33b32;
+    font-size: 12px;
 }
 
-.color-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
 }
 
-.color-options label {
+.repeat-box {
+    margin: 4px 0 18px;
+    padding: 14px;
+    border: 1px solid #dfe7e2;
+    border-radius: 10px;
+    background: white;
+}
+
+.repeat-box label {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
+}
+
+.repeat-box input[type='checkbox'] {
+    width: 16px;
+    height: 16px;
     margin: 0;
-    padding: 9px 11px;
-    border: 1px solid #dfe7e2;
-    border-radius: 9px;
-    background: white;
-    cursor: pointer;
+    accent-color: #26776d;
 }
 
-.color-options label.selected {
-    border-color: #26776d;
-    box-shadow: 0 0 0 2px rgba(38, 119, 109, .08);
-}
-
-.color-options input {
-    position: absolute;
-    opacity: 0;
-}
-
-.color-options label span {
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
+.repeat-box input[type='number'] {
+    width: 120px;
+    margin-top: 8px;
 }
 
 .event-status {
@@ -165,6 +183,32 @@
     cursor: wait;
 }
 
+.scope-toggle {
+    margin: 0 0 20px;
+}
+
+.scope-toggle>div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.scope-toggle button {
+    height: 46px;
+    border: 1px solid #dfe7e2;
+    border-radius: 9px;
+    background: white;
+    color: #586963;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.scope-toggle button.active {
+    border-color: #26776d;
+    background: #edf6f2;
+    color: #26776d;
+}
+
 @media (max-width: 520px) {
     .timeline-header {
         padding: 0 20px;
@@ -177,5 +221,10 @@
 
     .event-form-wrap h1 {
         font-size: 34px;
+    }
+
+    .scope-toggle>div,
+    .form-grid {
+        grid-template-columns: 1fr;
     }
 }

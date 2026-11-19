@@ -1,29 +1,99 @@
-import { useState } from 'react'
-import { createEvent } from '../apis/eventsApi'
+import { useState, useEffect } from 'react'
+import { getEvents } from '../apis/eventsApi'
+import { createTimelineDates } from '../apis/timelineDatesApi'
+import { EVENT_TYPES, DEPARTMENT_TYPES } from '../constants/timelineOptions'
+import TimelineHeader from '../components/TimelineHeader'
+import { supabase } from '../lib/supabase'
 import './AddEvent.css'
 
-const eventColors = [
-  { name: 'Forest', value: '#26776d' },
-  { name: 'Blue', value: '#4f75a9' },
-  { name: 'Amber', value: '#c89536' },
-  { name: 'Coral', value: '#c86a5b' },
-  { name: 'Purple', value: '#8066a8' },
-]
+function addWeeks(dateString, weeks) {
+  const date = new Date(`${dateString}T12:00:00`)
+  date.setDate(date.getDate() + weeks * 7)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
 
-function AddEvent({ onBack, onCreated }) {
+function AddEvent({ onBack, onCreated, initialScope }) {
+  const [scopeType, setScopeType] = useState(initialScope?.scopeType || 'event')
+  const [scopeId, setScopeId] = useState(initialScope?.scopeId || '')
+  const [events, setEvents] = useState([])
+  const [departments, setDepartments] = useState([])
+  const [dateType, setDateType] = useState('')
   const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [eventDate, setEventDate] = useState('')
-  const [color, setColor] = useState(eventColors[0].value)
+  const [titleEdited, setTitleEdited] = useState(false)
+  const [dateValue, setDateValue] = useState('')
+  const [timeValue, setTimeValue] = useState('')
+  const [location, setLocation] = useState('')
+  const [notes, setNotes] = useState('')
+  const [repeatMeeting, setRepeatMeeting] = useState(false)
+  const [repeatWeeks, setRepeatWeeks] = useState(4)
+  const [errors, setErrors] = useState({})
   const [status, setStatus] = useState({ type: '', message: '' })
 
-  async function handleSubmit(event) {
-    event.preventDefault()
-    setStatus({ type: 'loading', message: 'Adding event...' })
+  useEffect(() => {
+    getEvents().then(setEvents).catch(() => setEvents([]))
+    supabase?.from('departments').select('id, name, color').then(({ data }) => setDepartments(data || []))
+  }, [])
 
+  const scopes = scopeType === 'event' ? events : departments
+  const scopeName = scopes.find((scope) => scope.id === scopeId)?.title
+    || scopes.find((scope) => scope.id === scopeId)?.name
+    || ''
+  const types = scopeType === 'event' ? EVENT_TYPES : DEPARTMENT_TYPES
+
+  useEffect(() => {
+    if (titleEdited) return
+    const suggested = dateType && scopeName
+      ? `${dateType} – ${scopeName}`
+      : dateType || scopeName
+    setTitle(suggested)
+  }, [dateType, scopeName, titleEdited])
+
+  function changeScopeType(nextScopeType) {
+    setScopeType(nextScopeType)
+    setScopeId('')
+    setDateType('')
+    setTitleEdited(false)
+  }
+
+  function validate() {
+    const nextErrors = {}
+    if (!scopeId) nextErrors.scope = 'Choose an event or department.'
+    if (!dateType) nextErrors.dateType = 'Choose a date type.'
+    if (!title.trim()) nextErrors.title = 'Enter a title.'
+    if (!dateValue) nextErrors.date = 'Choose a date.'
+    if (dateType === 'Meeting' && repeatMeeting && (!Number.isInteger(Number(repeatWeeks)) || Number(repeatWeeks) < 1)) {
+      nextErrors.repeat = 'Enter at least 1 week.'
+    }
+    setErrors(nextErrors)
+    return Object.keys(nextErrors).length === 0
+  }
+
+  async function handleSubmit(event) {
+    event.preventEvent?.()
+    event.preventDefault()
+    if (!validate()) return
+
+    const scope = scopes.find((item) => item.id === scopeId)
+    const rowCount = dateType === 'Meeting' && repeatMeeting ? Number(repeatWeeks) : 1
+    const rows = Array.from({ length: rowCount }, (_, index) => ({
+      scope_type: scopeType,
+      scope_id: scopeId,
+      title,
+      date_type: dateType,
+      date_value: addWeeks(dateValue, index),
+      time_value: timeValue || null,
+      location: location.trim() || null,
+      notes: notes.trim() || null,
+      color: scope?.color || scope?.color,
+    }))
+
+    setStatus({ type: 'loading', message: 'Adding date...' })
     try {
-      await createEvent({ title, description, eventDate, color })
-      setStatus({ type: 'success', message: 'Event added to the timeline.' })
+      await createTimelineDates(rows)
+      setStatus({ type: 'success', message: 'Date added to the timeline.' })
       onCreated?.()
     } catch (error) {
       setStatus({ type: 'error', message: error.message })
@@ -32,42 +102,73 @@ function AddEvent({ onBack, onCreated }) {
 
   return (
     <main className="add-event-page">
-      <header className="timeline-header">
-        <button type="button" className="back-button" onClick={onBack}>← Timeline</button>
-        <button type="button" className="header-avatar" aria-label="Account menu">TN</button>
-      </header>
-
+      <TimelineHeader initials="TN" onAddDate={undefined} onLogout={onBack} />
       <section className="event-form-wrap">
-        <p className="page-kicker">New timeline item</p>
-        <h1>Add an event</h1>
-        <p className="page-subtitle">Create a color-coded milestone for the club.</p>
+        <button type="button" className="back-button" onClick={onBack}>← Back to timeline</button>
+        <p className="page-kicker">Add a date</p>
+        <h1>Plan the next milestone</h1>
 
-        <form className="event-form" onSubmit={handleSubmit}>
-          <label htmlFor="event-title">Event name</label>
-          <input id="event-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="ATP Hike 3" required />
-
-          <label htmlFor="event-description">Description</label>
-          <textarea id="event-description" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Add location, notes, or preparation details..." rows="4" />
-
-          <label htmlFor="event-date">Event date</label>
-          <input id="event-date" type="date" value={eventDate} onChange={(event) => setEventDate(event.target.value)} required />
-
-          <fieldset>
-            <legend>Timeline color</legend>
-            <div className="color-options">
-              {eventColors.map((option) => (
-                <label key={option.value} className={color === option.value ? 'selected' : ''}>
-                  <input type="radio" name="event-color" value={option.value} checked={color === option.value} onChange={() => setColor(option.value)} />
-                  <span style={{ background: option.value }} />
-                  {option.name}
-                </label>
-              ))}
+        <form className="event-form" onSubmit={handleSubmit} noValidate>
+          <fieldset className="scope-toggle">
+            <legend>Scope</legend>
+            <div>
+              <button type="button" className={scopeType === 'event' ? 'active' : ''} onClick={() => changeScopeType('event')}>For an event</button>
+              <button type="button" className={scopeType === 'department' ? 'active' : ''} onClick={() => changeScopeType('department')}>For a department</button>
             </div>
           </fieldset>
 
+          <label htmlFor="scope-select">{scopeType === 'event' ? 'Event' : 'Department'}</label>
+          <select id="scope-select" value={scopeId} onChange={(event) => setScopeId(event.target.value)}>
+            <option value="">Select {scopeType}</option>
+            {scopes.map((scope) => <option key={scope.id} value={scope.id}>{scope.title || scope.name}</option>)}
+          </select>
+          {errors.scope && <p className="field-error">{errors.scope}</p>}
+
+          <label htmlFor="date-type">Type</label>
+          <select id="date-type" value={dateType} onChange={(event) => setDateType(event.target.value)}>
+            <option value="">Select type</option>
+            {types.map((type) => <option key={type} value={type}>{type}</option>)}
+          </select>
+          {errors.dateType && <p className="field-error">{errors.dateType}</p>}
+
+          <label htmlFor="date-title">Title</label>
+          <input id="date-title" value={title} onChange={(event) => { setTitle(event.target.value); setTitleEdited(true) }} placeholder="Dry run – ATP Hike 3" />
+          {errors.title && <p className="field-error">{errors.title}</p>}
+
+          <div className="form-grid">
+            <div>
+              <label htmlFor="date-value">Date</label>
+              <input id="date-value" type="date" value={dateValue} onChange={(event) => setDateValue(event.target.value)} />
+              {errors.date && <p className="field-error">{errors.date}</p>}
+            </div>
+            <div>
+              <label htmlFor="time-value">Time <span>(optional)</span></label>
+              <input id="time-value" type="time" value={timeValue} onChange={(event) => setTimeValue(event.target.value)} />
+            </div>
+          </div>
+
+          <label htmlFor="date-location">Location <span>(optional)</span></label>
+          <input id="date-location" value={location} onChange={(event) => setLocation(event.target.value)} placeholder="Add a location" />
+
+          <label htmlFor="date-notes">Notes <span>(optional)</span></label>
+          <textarea id="date-notes" rows="4" value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Add preparation details" />
+
+          {dateType === 'Meeting' && (
+            <div className="repeat-box">
+              <label><input type="checkbox" checked={repeatMeeting} onChange={(event) => setRepeatMeeting(event.target.checked)} /> Repeat weekly</label>
+              {repeatMeeting && (
+                <div>
+                  <label htmlFor="repeat-weeks">Number of weeks</label>
+                  <input id="repeat-weeks" type="number" min="1" max="52" value={repeatWeeks} onChange={(event) => setRepeatWeeks(event.target.value)} />
+                  {errors.repeat && <p className="field-error">{errors.repeat}</p>}
+                </div>
+              )}
+            </div>
+          )}
+
           {status.message && <p className={`event-status ${status.type}`}>{status.message}</p>}
           <button type="submit" className="save-event-button" disabled={status.type === 'loading'}>
-            {status.type === 'loading' ? 'Saving...' : 'Add to timeline'}
+            {status.type === 'loading' ? 'Saving...' : 'Add date'}
           </button>
         </form>
       </section>

@@ -1,20 +1,31 @@
 import { useEffect, useState } from 'react'
 import { getCurrentProfile, logoutAccount } from '../apis/authApi'
 import { getEvents } from '../apis/eventsApi'
+import { getTimelineDates } from '../apis/timelineDatesApi'
+import TimelineHeader from '../components/TimelineHeader'
+import TimelineFilters from '../components/TimelineFilters'
+import TimelineDateCard from '../components/TimelineDateCard'
+import { EVENT_TYPES, DEPARTMENT_TYPES } from '../constants/timelineOptions'
 import './Home.css'
 
-function Home({ onLogout, onAddEvent }) {
+function Home({ onLogout, onAddDate }) {
   const [profile, setProfile] = useState(null)
   const [events, setEvents] = useState([])
+  const [dates, setDates] = useState([])
   const [loading, setLoading] = useState(true)
+  const [activeScopes, setActiveScopes] = useState([])
+  const [activeTypes, setActiveTypes] = useState([])
+  const [onlyMine, setOnlyMine] = useState(false)
 
   useEffect(() => {
-    Promise.all([getCurrentProfile(), getEvents()])
-      .then(([profileData, eventData]) => {
+    Promise.all([getCurrentProfile(), getEvents(), getTimelineDates()])
+      .then(([profileData, eventData, dateData]) => {
         setProfile(profileData)
         setEvents(eventData)
+        setDates(dateData)
+        setActiveScopes(eventData.map((event) => event.id))
       })
-      .catch(() => setEvents([]))
+      .catch(() => setDates([]))
       .finally(() => setLoading(false))
   }, [])
 
@@ -23,65 +34,83 @@ function Home({ onLogout, onAddEvent }) {
     onLogout()
   }
 
+  function toggleScope(scopeId) {
+    setActiveScopes((current) => current.includes(scopeId)
+      ? current.filter((id) => id !== scopeId)
+      : [...current, scopeId])
+  }
+
+  function toggleType(type) {
+    setActiveTypes((current) => current.includes(type)
+      ? current.filter((item) => item !== type)
+      : [...current, type])
+  }
+
   const initials = profile
     ? `${profile.first_name?.[0] || ''}${profile.last_name?.[0] || ''}`.toUpperCase()
     : 'TP'
 
+  const scopes = events.map((event) => ({
+    id: event.id,
+    label: event.title,
+    color: event.color || '#26776d',
+  }))
+
+  const types = [...new Set([...EVENT_TYPES, ...DEPARTMENT_TYPES])]
+
+  const visibleDates = dates.filter((item) => {
+    const scopeMatches = activeScopes.length === 0 || activeScopes.includes(item.scope_id)
+    const typeMatches = activeTypes.length === 0 || activeTypes.includes(item.date_type)
+    const mineMatches = !onlyMine || item.owner_id === profile?.id
+    return scopeMatches && typeMatches && mineMatches
+  })
+
   return (
     <main className="home-page">
-      <header className="timeline-header">
-        <div className="timeline-brand">
-          <span className="brand-icon" aria-hidden="true">△</span>
-          <span>TPAC Timeline</span>
-        </div>
-
-        <div className="header-actions">
-          <button type="button" className="add-event-button" onClick={onAddEvent}>+ Add event</button>
-          <button type="button" className="header-avatar" onClick={handleLogout} aria-label="Log out">{initials}</button>
-        </div>
-      </header>
+      <TimelineHeader initials={initials} onAddDate={() => onAddDate?.()} onLogout={handleLogout} />
 
       <section className="timeline-content">
         <div className="timeline-heading">
           <div>
             <p className="home-kicker">Club schedule</p>
-            <h1>Event timeline</h1>
+            <h1>Horizontal timeline</h1>
           </div>
         </div>
 
+        <TimelineFilters
+          scopes={scopes}
+          types={types}
+          activeScopes={activeScopes}
+          activeTypes={activeTypes}
+          onToggleScope={toggleScope}
+          onToggleType={toggleType}
+          onlyMine={onlyMine}
+          onOnlyMineChange={setOnlyMine}
+        />
+
         {loading ? (
-          <p className="timeline-empty">Loading events...</p>
-        ) : events.length === 0 ? (
+          <p className="timeline-empty">Loading dates...</p>
+        ) : visibleDates.length === 0 ? (
           <div className="timeline-empty">
-            <p>No events scheduled yet.</p>
-            <button type="button" onClick={onAddEvent}>Create the first event</button>
+            <p>No dates match the current filters.</p>
+            <button type="button" onClick={() => onAddDate?.()}>Add the first date</button>
           </div>
         ) : (
-          <div className="timeline-list">
-            {events.map((item) => {
-              const date = new Date(`${item.event_date}T00:00:00`)
-
-              return (
-                <article className="timeline-item" key={item.id}>
-                  <div className="timeline-date">
-                    <span>{date.toLocaleDateString('en-SG', { month: 'short' }).toUpperCase()}</span>
-                    <strong>{date.getDate()}</strong>
-                  </div>
-
-                  <div className="timeline-track" aria-hidden="true">
-                    <span style={{ background: item.color }} />
-                  </div>
-
-                  <div className="timeline-card" style={{ borderLeftColor: item.color }}>
-                    <div>
-                      <h2>{item.title}</h2>
-                      {item.description && <p>{item.description}</p>}
-                    </div>
-                    <span className="event-color-dot" style={{ background: item.color }} />
-                  </div>
-                </article>
-              )
-            })}
+          <div className="horizontal-timeline-wrap">
+            <div className="horizontal-timeline-track" aria-hidden="true" />
+            <div className="horizontal-timeline">
+              {visibleDates.map((item) => {
+                const scope = scopes.find((scopeItem) => scopeItem.id === item.scope_id)
+                return (
+                  <TimelineDateCard
+                    key={item.id}
+                    item={{ ...item, color: scope?.color || item.color }}
+                    scopeLabel={scope?.label || 'Department'}
+                    onQuickAdd={() => onAddDate?.({ scopeType: 'event', scopeId: item.scope_id })}
+                  />
+                )
+              })}
+            </div>
           </div>
         )}
       </section>

@@ -9,6 +9,7 @@ function App() {
   const [page, setPage] = useState('login')
   const [authenticated, setAuthenticated] = useState(false)
   const [appPage, setAppPage] = useState('timeline')
+  const [initialScope, setInitialScope] = useState(null)
 
   useEffect(() => {
     getCurrentSession()
@@ -20,8 +21,15 @@ function App() {
     if (appPage === 'add-event') {
       return (
         <AddEvent
-          onBack={() => setAppPage('timeline')}
-          onCreated={() => setAppPage('timeline')}
+          onBack={() => {
+            setInitialScope(null)
+            setAppPage('timeline')
+          }}
+          onCreated={() => {
+            setInitialScope(null)
+            setAppPage('timeline')
+          }}
+          initialScope={initialScope}
         />
       )
     }
@@ -29,7 +37,10 @@ function App() {
     return (
       <Home
         onLogout={() => setAuthenticated(false)}
-        onAddEvent={() => setAppPage('add-event')}
+        onAddDate={(scope) => {
+          setInitialScope(scope || null)
+          setAppPage('add-event')
+        }}
       />
     )
   }
