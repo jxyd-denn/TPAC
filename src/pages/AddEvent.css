@@ -47,6 +47,10 @@
     text-transform: uppercase;
 }
 
+.page-title {
+    padding-bottom: 20px;
+}
+
 .event-form-wrap h1 {
     margin: 0;
     color: #17362f;
@@ -209,6 +213,67 @@
     color: #26776d;
 }
 
+.event-form select[multiple] {
+    height: auto;
+    min-height: 112px;
+    padding: 6px;
+}
+
+.event-form select[multiple] option {
+    border-radius: 6px;
+    padding: 8px 10px;
+}
+
+.organizer-fieldset {
+    border: 0;
+    margin: 4px 0 18px;
+    padding: 0;
+}
+
+.organizer-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.organizer-options label {
+    height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    border: 1px solid #dfe7e2;
+    border-radius: 10px;
+    margin: 0;
+    padding: 7px 10px;
+    background: white;
+    cursor: pointer;
+}
+
+.organizer-options label.selected {
+    border-color: #26776d;
+    background: #edf6f2;
+}
+
+.organizer-options input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: #26776d;
+}
+
+.organizer-avatar {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #e7f0ec;
+    color: #26776d;
+    font-size: 11px;
+    font-weight: 900;
+}
+
 @media (max-width: 520px) {
     .timeline-header {
         padding: 0 20px;
@@ -225,6 +290,10 @@
 
     .scope-toggle>div,
     .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .organizer-options {
         grid-template-columns: 1fr;
     }
 }

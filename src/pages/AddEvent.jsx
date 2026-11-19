@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { addDays, format, parseISO } from 'date-fns'
 import { createTimelineDates } from '../apis/timelineDatesApi'
 import { EVENT_OPTIONS, EVENT_TYPES, DEPARTMENT_TYPES } from '../constants/timelineOptions'
 import TimelineHeader from '../components/TimelineHeader'
@@ -6,32 +7,32 @@ import { supabase } from '../lib/supabase'
 import './AddEvent.css'
 
 function addWeeks(dateString, weeks) {
-  const date = new Date(`${dateString}T12:00:00`)
-  date.setDate(date.getDate() + weeks * 7)
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
+  return format(addDays(parseISO(dateString), weeks * 7), 'yyyy-MM-dd')
 }
 
 function AddEvent({ onBack, onCreated, initialScope }) {
   const [scopeType, setScopeType] = useState(initialScope?.scopeType || 'event')
   const [scopeId, setScopeId] = useState(initialScope?.scopeId || '')
   const [departments, setDepartments] = useState([])
+  const [profiles, setProfiles] = useState([])
   const [dateType, setDateType] = useState('')
   const [title, setTitle] = useState('')
   const [titleEdited, setTitleEdited] = useState(false)
   const [dateValue, setDateValue] = useState('')
+  const [endDateValue, setEndDateValue] = useState('')
   const [timeValue, setTimeValue] = useState('')
+  const [endTimeValue, setEndTimeValue] = useState('')
   const [location, setLocation] = useState('')
   const [notes, setNotes] = useState('')
   const [repeatMeeting, setRepeatMeeting] = useState(false)
   const [repeatWeeks, setRepeatWeeks] = useState(4)
+  const [organizerIds, setOrganizerIds] = useState([])
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState({ type: '', message: '' })
 
   useEffect(() => {
     supabase?.from('departments').select('id, name, color').then(({ data }) => setDepartments(data || []))
+    supabase?.from('profiles').select('id, first_name, last_name').order('first_name').then(({ data }) => setProfiles(data || []))
   }, [])
 
   const scopes = scopeType === 'event' ? EVENT_OPTIONS : departments
@@ -61,9 +62,13 @@ function AddEvent({ onBack, onCreated, initialScope }) {
     if (!dateType) nextErrors.dateType = 'Choose a date type.'
     if (!title.trim()) nextErrors.title = 'Enter a title.'
     if (!dateValue) nextErrors.date = 'Choose a date.'
+    if (dateValue && endDateValue && parseISO(endDateValue) < parseISO(dateValue)) {
+      nextErrors.endDate = 'End date cannot be before the start date.'
+    }
     if (dateType === 'Meeting' && repeatMeeting && (!Number.isInteger(Number(repeatWeeks)) || Number(repeatWeeks) < 1)) {
       nextErrors.repeat = 'Enter at least 1 week.'
     }
+    if (!organizerIds.length) nextErrors.organizers = 'Assign at least one organizer or IC.'
     setErrors(nextErrors)
     return Object.keys(nextErrors).length === 0
   }
@@ -81,9 +86,12 @@ function AddEvent({ onBack, onCreated, initialScope }) {
       title,
       date_type: dateType,
       date_value: addWeeks(dateValue, index),
+      end_date: endDateValue ? addWeeks(endDateValue, index) : null,
       time_value: timeValue || null,
+      end_time: endTimeValue || null,
       location: location.trim() || null,
       notes: notes.trim() || null,
+      organizer_ids: organizerIds,
       color: scope?.color || scope?.color,
     }))
 
@@ -103,7 +111,7 @@ function AddEvent({ onBack, onCreated, initialScope }) {
       <section className="event-form-wrap">
         <button type="button" className="back-button" onClick={onBack}>← Back to timeline</button>
         <p className="page-kicker">Add a date</p>
-        <h1>Plan the next milestone</h1>
+        <h1 className="page-title">Plan the next milestone</h1>
 
         <form className="event-form" onSubmit={handleSubmit} noValidate>
           <fieldset className="scope-toggle">
@@ -143,6 +151,46 @@ function AddEvent({ onBack, onCreated, initialScope }) {
               <input id="time-value" type="time" value={timeValue} onChange={(event) => setTimeValue(event.target.value)} />
             </div>
           </div>
+
+          <div className="form-grid">
+            <div>
+              <label htmlFor="end-date-value">End date</label>
+              <input id="end-date-value" type="date" value={endDateValue} onChange={(event) => setEndDateValue(event.target.value)} />
+              {errors.date && <p className="field-error">{errors.date}</p>}
+            </div>
+            <div>
+              <label htmlFor="end-time-value">End time <span>(optional)</span></label>
+              <input id="end-time-value" type="time" value={endTimeValue} onChange={(event) => setEndTimeValue(event.target.value)} />
+            </div>
+          </div>
+
+          <fieldset className="organizer-fieldset">
+            <legend>Organizers / ICs</legend>
+            <div className="organizer-options">
+              {profiles.map((profile) => {
+                const name = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Unnamed member'
+                const checked = organizerIds.includes(profile.id)
+
+                return (
+                  <label key={profile.id} className={checked ? 'selected' : ''}>
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(event) => {
+                        setOrganizerIds((current) => event.target.checked
+                          ? [...current, profile.id]
+                          : current.filter((id) => id !== profile.id))
+                      }}
+                    />
+                    <span className="organizer-avatar" aria-hidden="true">
+                      {`${profile.first_name?.[0] || ''}${profile.last_name?.[0] || ''}`.toUpperCase()}
+                    </span>
+                    <span>{name}</span>
+                  </label>
+                )
+              })}
+            </div>
+          </fieldset>
 
           <label htmlFor="date-location">Location <span>(optional)</span></label>
           <input id="date-location" value={location} onChange={(event) => setLocation(event.target.value)} placeholder="Add a location" />

@@ -260,7 +260,8 @@
 
 .general-detail-card dl div {
     display: grid;
-    grid-template-columns: 80px 1fr;
+    grid-template-columns: 96px 1fr;
+    column-gap: 18px;
     gap: 8px;
     border-top: 1px solid var(--timeline-border);
     padding: 8px 0;
@@ -303,4 +304,35 @@
     color: var(--timeline-accent);
     font-weight: 800;
     cursor: pointer;
+}
+
+.organizer-name-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.organizer-name-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--timeline-border);
+    border-radius: 999px;
+    padding: 5px 8px 5px 5px;
+    background: var(--timeline-surface);
+    color: var(--timeline-text);
+    font-size: 12px;
+    line-height: 1;
+}
+
+.organizer-card-avatar {
+    width: 24px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--timeline-accent) 14%, var(--timeline-bg));
+    color: var(--timeline-accent);
+    font-size: 9px;
+    font-weight: 900;
 }

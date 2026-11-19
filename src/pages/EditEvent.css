@@ -1,0 +1,220 @@
+.edit-event-page {
+    min-height: 100vh;
+    background: #f7f9f6;
+    color: #18312d;
+}
+
+.edit-event-form-wrap {
+    width: min(620px, calc(100% - 40px));
+    margin: 48px auto;
+}
+
+.edit-back-button {
+    margin-bottom: 24px;
+    border: 0;
+    background: none;
+    color: #26776d;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.edit-page-kicker {
+    margin: 0 0 8px;
+    color: #26776d;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+}
+
+.edit-event-form-wrap h1 {
+    margin: 0 0 24px;
+    color: #17362f;
+    font-family: Georgia, serif;
+    font-size: 42px;
+}
+
+.edit-event-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-event-form label,
+.edit-event-form legend {
+    margin-bottom: 8px;
+    color: #314640;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.edit-event-form label>span {
+    color: #84918d;
+    font-weight: 500;
+}
+
+.edit-event-form input,
+.edit-event-form select,
+.edit-event-form textarea {
+    width: 100%;
+    border: 1px solid #dce5df;
+    border-radius: 10px;
+    background: white;
+    color: #18312d;
+    outline: none;
+}
+
+.edit-event-form input,
+.edit-event-form select {
+    height: 48px;
+    margin-bottom: 6px;
+    padding: 0 14px;
+}
+
+.edit-event-form textarea {
+    margin-bottom: 8px;
+    padding: 12px 14px;
+    resize: vertical;
+}
+
+.edit-scope-toggle {
+    margin: 0 0 20px;
+    border: 0;
+    padding: 0;
+}
+
+.edit-scope-toggle>div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.edit-scope-toggle button {
+    height: 46px;
+    border: 1px solid #dfe7e2;
+    border-radius: 9px;
+    background: white;
+    color: #586963;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.edit-scope-toggle button.active {
+    border-color: #26776d;
+    background: #edf6f2;
+    color: #26776d;
+}
+
+.edit-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.edit-field-error {
+    margin: 2px 0 12px;
+    color: #a33b32;
+    font-size: 12px;
+}
+
+.edit-organizer-fieldset {
+    border: 0;
+    margin: 4px 0 18px;
+    padding: 0;
+}
+
+.edit-organizer-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.edit-organizer-options label {
+    height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    border: 1px solid #dfe7e2;
+    border-radius: 10px;
+    margin: 0;
+    padding: 7px 10px;
+    background: white;
+    cursor: pointer;
+}
+
+.edit-organizer-options label.selected {
+    border-color: #26776d;
+    background: #edf6f2;
+}
+
+.edit-organizer-options input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: #26776d;
+}
+
+.edit-organizer-avatar {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #e7f0ec;
+    color: #26776d;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.edit-status {
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+}
+
+.edit-status.error {
+    background: #fff1f0;
+    color: #a33b32;
+}
+
+.edit-status.success {
+    background: #edf7f3;
+    color: #26776d;
+}
+
+.edit-status.loading {
+    background: #f1f5f3;
+    color: #71807b;
+}
+
+.edit-save-button {
+    height: 52px;
+    border: 0;
+    border-radius: 10px;
+    background: #1f7167;
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.edit-save-button:disabled {
+    opacity: .7;
+    cursor: wait;
+}
+
+@media (max-width: 520px) {
+    .edit-event-form-wrap {
+        width: calc(100% - 32px);
+        margin: 32px auto;
+    }
+
+    .edit-event-form-wrap h1 {
+        font-size: 34px;
+    }
+
+    .edit-scope-toggle>div,
+    .edit-form-grid,
+    .edit-organizer-options {
+        grid-template-columns: 1fr;
+    }
+}

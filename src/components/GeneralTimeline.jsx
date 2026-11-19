@@ -12,6 +12,7 @@ import {
   startOfMonth,
 } from 'date-fns'
 import './GeneralTimeline.css'
+import { supabase } from '../lib/supabase'
 
 const PILL_WIDTH = 190
 const PILL_GAP = 10
@@ -44,11 +45,19 @@ function GeneralTimeline({ items, scopes, onQuickAdd }) {
   const [pixelsPerDay, setPixelsPerDay] = useState(8)
   const [selectedItem, setSelectedItem] = useState(null)
   const [availability, setAvailability] = useState({})
+  const [profiles, setProfiles] = useState([])
   const scrollRef = useRef(null)
+
+  useEffect(() => {
+    supabase?.from('profiles')
+      .select('id, first_name, last_name')
+      .then(({ data }) => setProfiles(data || []))
+  }, [])
 
   const parsedItems = useMemo(() => items.map((item) => {
     const date = parseIsoDate(item.date_value)
-    return date ? { ...item, parsedDate: date } : null
+    const endDate = item.end_date ? parseIsoDate(item.end_date) : date
+    return date ? { ...item, parsedDate: date, parsedEndDate: endDate } : null
   }).filter(Boolean).sort((a, b) => a.parsedDate - b.parsedDate), [items])
 
   const range = useMemo(() => {
@@ -196,11 +205,31 @@ function GeneralTimeline({ items, scopes, onQuickAdd }) {
           <h2>{selectedItem.title}</h2>
           <dl>
             <div><dt>Event</dt><dd>{eventFor(selectedItem)?.label || 'Department'}</dd></div>
-            <div><dt>Date</dt><dd>{format(parseIsoDate(selectedItem.date_value) || selectedItem.parsedDate, 'dd MMMM yyyy')}</dd></div>
-            {selectedItem.time_value && <div><dt>Time</dt><dd>{selectedItem.time_value}</dd></div>}
+            <div><dt>Date</dt><dd>{format(selectedItem.parsedDate, 'dd MMMM yyyy')}{selectedItem.parsedEndDate && selectedItem.parsedEndDate.getTime() !== selectedItem.parsedDate.getTime() ? ` – ${format(selectedItem.parsedEndDate, 'dd MMMM yyyy')}` : ''}</dd></div>
+            {(selectedItem.time_value || selectedItem.end_time) && <div><dt>Time</dt><dd>{selectedItem.time_value || ''}{selectedItem.time_value && selectedItem.end_time ? ' – ' : ''}{selectedItem.end_time || ''}</dd></div>}
             {selectedItem.location && <div><dt>Location</dt><dd>{selectedItem.location}</dd></div>}
             {selectedItem.notes && <div><dt>Notes</dt><dd>{selectedItem.notes}</dd></div>}
-            {selectedItem.mcs && <div><dt>MCs</dt><dd>{selectedItem.mcs}</dd></div>}
+            {selectedItem.organizer_ids?.length > 0 && (
+              <div>
+                <dt>Organizers</dt>
+                <dd>
+                  <div className="organizer-name-cards">
+                    {selectedItem.organizer_ids
+                      .map((id) => profiles.find((profile) => profile.id === id))
+                      .filter(Boolean)
+                      .map((profile) => {
+                        const name = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Unnamed member'
+                        return (
+                          <span className="organizer-name-card" key={profile.id}>
+                            <span className="organizer-card-avatar">{`${profile.first_name?.[0] || ''}${profile.last_name?.[0] || ''}`.toUpperCase()}</span>
+                            {name}
+                          </span>
+                        )
+                      })}
+                  </div>
+                </dd>
+              </div>
+            )}
           </dl>
           <div className="availability-actions">
             {[['available', 'Available'], ['maybe', 'Maybe'], ['unavailable', 'Unavailable']].map(([key, label]) => (
@@ -214,7 +243,11 @@ function GeneralTimeline({ items, scopes, onQuickAdd }) {
               </button>
             ))}
           </div>
-          {onQuickAdd && <button type="button" className="detail-add-button" onClick={() => onQuickAdd({ scopeType: 'event', scopeId: selectedItem.scope_id })}>+ Add date</button>}
+          {onQuickAdd && <button type="button" className="detail-add-button" onClick={() => onQuickAdd({
+            scopeType: selectedItem.scope_type || 'event',
+            scopeId: selectedItem.scope_id,
+            editItem: selectedItem,
+          })}>Edit event</button>}
         </aside>
       )}
     </section>

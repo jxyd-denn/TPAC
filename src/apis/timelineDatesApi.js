@@ -55,3 +55,19 @@ export async function createTimelineDates(rows) {
     if (error) throw error
     return data
 }
+
+export async function updateTimelineDate(id, updates) {
+    const client = requireSupabase()
+    const {
+        data,
+        error
+    } = await client
+        .from('timeline_dates')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single()
+
+    if (error) throw error
+    return data
+}
