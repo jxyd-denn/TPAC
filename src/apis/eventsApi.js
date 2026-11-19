@@ -37,7 +37,9 @@ export async function createEvent({
 
     if (sessionError) throw sessionError
 
-    const ownerId = sessionData.session ? .user ? .id
+    const ownerId = sessionData && sessionData.session ?
+        sessionData.session.user.id :
+        null
     if (!ownerId) throw new Error('You must be signed in to create an event.')
 
     const {
