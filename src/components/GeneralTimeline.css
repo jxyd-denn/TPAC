@@ -306,6 +306,71 @@
     cursor: pointer;
 }
 
+.detail-action-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.detail-edit-button,
+.detail-delete-button {
+    border: 0;
+    padding: 0;
+    background: none;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.detail-edit-button {
+    color: var(--timeline-accent);
+}
+
+.detail-delete-button {
+    color: #b84b42;
+}
+
+.delete-confirmation {
+    margin-top: 14px;
+    border: 1px solid #e8c7c2;
+    border-radius: 9px;
+    padding: 12px;
+    background: #fff7f5;
+}
+
+.delete-confirmation strong {
+    color: #7e3028;
+}
+
+.delete-confirmation p {
+    margin: 4px 0 10px;
+    color: #71807b;
+    font-size: 12px;
+}
+
+.delete-confirmation>div {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.delete-confirmation button {
+    min-height: 34px;
+    border: 1px solid var(--timeline-border);
+    border-radius: 7px;
+    padding: 0 10px;
+    background: var(--timeline-bg);
+    color: var(--timeline-text);
+    cursor: pointer;
+}
+
+.delete-confirmation .confirm-delete-button {
+    border-color: #b84b42;
+    background: #b84b42;
+    color: white;
+}
+
 .organizer-name-cards {
     display: flex;
     flex-wrap: wrap;

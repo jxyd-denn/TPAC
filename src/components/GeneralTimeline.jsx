@@ -13,6 +13,7 @@ import {
 } from 'date-fns'
 import './GeneralTimeline.css'
 import { supabase } from '../lib/supabase'
+import { deleteTimelineDate } from '../apis/timelineDatesApi'
 
 const PILL_WIDTH = 190
 const PILL_GAP = 10
@@ -46,6 +47,7 @@ function GeneralTimeline({ items, scopes, onQuickAdd }) {
   const [selectedItem, setSelectedItem] = useState(null)
   const [availability, setAvailability] = useState({})
   const [profiles, setProfiles] = useState([])
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null)
   const scrollRef = useRef(null)
 
   useEffect(() => {
@@ -121,6 +123,15 @@ function GeneralTimeline({ items, scopes, onQuickAdd }) {
 
   function eventFor(item) {
     return scopes.find((scope) => scope.id === item.scope_id)
+  }
+
+  function handleDelete(item) {
+    if (deleteConfirmId === item.id) {
+      deleteTimelineDate(item.id)
+      setDeleteConfirmId(null)
+    } else {
+      setDeleteConfirmId(item.id)
+    }
   }
 
   return (
@@ -243,11 +254,41 @@ function GeneralTimeline({ items, scopes, onQuickAdd }) {
               </button>
             ))}
           </div>
-          {onQuickAdd && <button type="button" className="detail-add-button" onClick={() => onQuickAdd({
-            scopeType: selectedItem.scope_type || 'event',
-            scopeId: selectedItem.scope_id,
-            editItem: selectedItem,
-          })}>Edit event</button>}
+          {onQuickAdd && (
+            <div className="detail-action-row">
+              <button type="button" className="detail-edit-button" onClick={() => onQuickAdd({
+                scopeType: selectedItem.scope_type || 'event',
+                scopeId: selectedItem.scope_id,
+                editItem: selectedItem,
+              })}>Edit event</button>
+
+              <button type="button" className="detail-delete-button" onClick={() => setDeleteConfirmId(selectedItem.id)}>Delete event</button>
+            </div>
+          )}
+
+          {deleteConfirmId === selectedItem.id && (
+            <div className="delete-confirmation" role="alertdialog" aria-label="Confirm event deletion">
+              <strong>Delete this event?</strong>
+              <p>This action cannot be undone.</p>
+              <div>
+                <button type="button" onClick={() => setDeleteConfirmId(null)}>Cancel</button>
+                <button
+                  type="button"
+                  className="confirm-delete-button"
+                  onClick={async () => {
+                    try {
+                      await deleteTimelineDate(selectedItem.id)
+                      setDeleteConfirmId(null)
+                      setSelectedItem(null)
+                      window.location.reload()
+                    } catch (error) {
+                      console.error(error)
+                    }
+                  }}
+                >Delete</button>
+              </div>
+            </div>
+          )}
         </aside>
       )}
     </section>

@@ -71,3 +71,15 @@ export async function updateTimelineDate(id, updates) {
     if (error) throw error
     return data
 }
+
+export async function deleteTimelineDate(id) {
+    const client = requireSupabase()
+    const {
+        error
+    } = await client
+        .from('timeline_dates')
+        .delete()
+        .eq('id', id)
+
+    if (error) throw error
+}
