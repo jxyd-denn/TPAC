@@ -36,6 +36,40 @@ export const EVENT_OPTIONS = [{
 ]
 
 export const EVENT_TYPES = ['Recce', 'Dry run', 'Exec date']
+
+// Manually add or remove department choices here.
+export const DEPARTMENT_OPTIONS = [{
+        id: 'a1111111-1111-4111-8111-111111111111',
+        name: 'Quartermaster',
+        color: '#56B4E9'
+    },
+    {
+        id: 'b2222222-2222-4222-8222-222222222222',
+        name: 'Publicity Heads',
+        color: '#CC79A7'
+    },
+    {
+        id: 'c3333333-3333-4333-8333-333333333333',
+        name: 'Secretaries',
+        color: '#D55E00'
+    },
+    {
+        id: 'd4444444-4444-4444-8444-444444444444',
+        name: 'Training Heads',
+        color: '#009E73'
+    },
+    {
+        id: 'e5555555-5555-4555-8555-555555555555',
+        name: 'Treasurers',
+        color: '#E69F00'
+    },
+    {
+        id: 'f6666666-6666-4666-8666-666666666666',
+        name: 'PVPs',
+        color: '#0072B2'
+    }
+]
+
 export const DEPARTMENT_TYPES = ['Meeting', 'Submission']
 
 export const EVENT_COLORS = ['#0072B2', '#E69F00', '#009E73', '#CC79A7', '#56B4E9', '#D55E00', '#6A51A3']
