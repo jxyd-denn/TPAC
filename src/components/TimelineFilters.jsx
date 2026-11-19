@@ -1,6 +1,21 @@
 import './TimelineFilters.css'
 
-function TimelineFilters({ scopes, departments = [], types, activeScopes, activeDepartments = [], activeTypes, onToggleScope, onToggleDepartment, onToggleType, onlyMine, onOnlyMineChange, searchQuery, onSearchChange, onClearAll }) {
+function TimelineFilters({
+  scopes = [],
+  departments = [],
+  types = [],
+  activeScopes = [],
+  activeDepartments = [],
+  activeTypes = [],
+  onToggleScope = () => {},
+  onToggleDepartment = () => {},
+  onToggleType = () => {},
+  onlyMine = false,
+  onOnlyMineChange = () => {},
+  searchQuery = '',
+  onSearchChange = () => {},
+  onClearAll = () => {},
+}) {
   return (
     <div className="timeline-filters">
       <div className="search-filter">
