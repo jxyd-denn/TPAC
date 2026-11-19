@@ -1,10 +1,13 @@
 import './TimelineFilters.css'
 
-function TimelineFilters({ scopes, types, activeScopes, activeTypes, onToggleScope, onToggleType, onlyMine, onOnlyMineChange, searchQuery, onSearchChange }) {
+function TimelineFilters({ scopes, types, activeScopes, activeTypes, onToggleScope, onToggleType, onlyMine, onOnlyMineChange, searchQuery, onSearchChange, onClearAll }) {
   return (
     <div className="timeline-filters">
       <div className="search-filter">
-        <label htmlFor="timeline-search">Search timeline</label>
+        <div className="search-filter-heading">
+          <label htmlFor="timeline-search">Search timeline</label>
+          <button type="button" className="clear-filters-button" onClick={onClearAll}>Clear all filters</button>
+        </div>
         <input
           id="timeline-search"
           type="search"

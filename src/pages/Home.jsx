@@ -31,6 +31,13 @@ function Home({ onLogout, onAddDate }) {
     onLogout()
   }
 
+  function clearAllFilters() {
+    setSearchQuery('')
+    setActiveScopes(EVENT_OPTIONS.map((event) => event.id))
+    setActiveTypes([])
+    setOnlyMine(false)
+  }
+
   function toggleScope(scopeId) {
     setActiveScopes((current) => current.includes(scopeId)
       ? current.filter((id) => id !== scopeId)
@@ -92,6 +99,7 @@ function Home({ onLogout, onAddDate }) {
           onOnlyMineChange={setOnlyMine}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          onClearAll={clearAllFilters}
         />
 
         {loading ? (

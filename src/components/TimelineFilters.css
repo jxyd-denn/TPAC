@@ -95,6 +95,32 @@
     accent-color: #26776d;
 }
 
+.search-filter-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 7px;
+}
+
+.search-filter-heading label {
+    margin-bottom: 0;
+}
+
+.clear-filters-button {
+    border: 0;
+    padding: 0;
+    background: none;
+    color: #26776d;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.clear-filters-button:hover {
+    text-decoration: underline;
+}
+
 @media (max-width: 760px) {
     .filter-columns {
         grid-template-columns: 1fr;
