@@ -4,7 +4,7 @@ function TimelineFilters({ scopes, types, activeScopes, activeTypes, onToggleSco
   return (
     <div className="timeline-filters">
       <div className="filter-group">
-        <p>Scope</p>
+        <p>Events</p>
         <div className="chip-row">
           {scopes.map((scope) => (
             <button key={scope.id} type="button" className={`filter-chip ${activeScopes.includes(scope.id) ? 'active' : ''}`} onClick={() => onToggleScope(scope.id)}>

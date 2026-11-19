@@ -1,29 +1,25 @@
 import { useEffect, useState } from 'react'
 import { getCurrentProfile, logoutAccount } from '../apis/authApi'
-import { getEvents } from '../apis/eventsApi'
 import { getTimelineDates } from '../apis/timelineDatesApi'
 import TimelineHeader from '../components/TimelineHeader'
 import TimelineFilters from '../components/TimelineFilters'
 import TimelineDateCard from '../components/TimelineDateCard'
-import { EVENT_TYPES, DEPARTMENT_TYPES } from '../constants/timelineOptions'
+import { EVENT_OPTIONS, EVENT_TYPES, DEPARTMENT_TYPES } from '../constants/timelineOptions'
 import './Home.css'
 
 function Home({ onLogout, onAddDate }) {
   const [profile, setProfile] = useState(null)
-  const [events, setEvents] = useState([])
   const [dates, setDates] = useState([])
   const [loading, setLoading] = useState(true)
-  const [activeScopes, setActiveScopes] = useState([])
+  const [activeScopes, setActiveScopes] = useState(EVENT_OPTIONS.map((event) => event.id))
   const [activeTypes, setActiveTypes] = useState([])
   const [onlyMine, setOnlyMine] = useState(false)
 
   useEffect(() => {
-    Promise.all([getCurrentProfile(), getEvents(), getTimelineDates()])
-      .then(([profileData, eventData, dateData]) => {
+    Promise.all([getCurrentProfile(), getTimelineDates()])
+      .then(([profileData, dateData]) => {
         setProfile(profileData)
-        setEvents(eventData)
         setDates(dateData)
-        setActiveScopes(eventData.map((event) => event.id))
       })
       .catch(() => setDates([]))
       .finally(() => setLoading(false))
@@ -50,7 +46,7 @@ function Home({ onLogout, onAddDate }) {
     ? `${profile.first_name?.[0] || ''}${profile.last_name?.[0] || ''}`.toUpperCase()
     : 'TP'
 
-  const scopes = events.map((event) => ({
+  const scopes = EVENT_OPTIONS.map((event) => ({
     id: event.id,
     label: event.title,
     color: event.color || '#26776d',
