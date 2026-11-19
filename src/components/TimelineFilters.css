@@ -1,9 +1,42 @@
 .timeline-filters {
     display: grid;
-    grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) auto;
-    gap: 18px;
-    align-items: end;
+    grid-template-columns: 1fr;
+    gap: 14px;
     margin-bottom: 28px;
+}
+
+.search-filter {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-filter label {
+    margin-bottom: 7px;
+    color: #71807b;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.search-filter input {
+    width: 100%;
+    height: 46px;
+    border: 1px solid #dfe7e2;
+    border-radius: 9px;
+    padding: 0 14px;
+    background: white;
+    color: #18312d;
+    outline: none;
+}
+
+.search-filter input:focus {
+    border-color: #26776d;
+    box-shadow: 0 0 0 3px rgba(38, 119, 109, .08);
+}
+
+.filter-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
 }
 
 .filter-group p {
@@ -47,10 +80,12 @@
 }
 
 .mine-toggle {
+    width: 100%;
     display: flex;
     align-items: center;
-    gap: 8px;
-    height: 38px;
+    gap: 9px;
+    min-height: 42px;
+    padding: 0 2px;
     color: #586963;
     font-size: 13px;
     cursor: pointer;
@@ -61,7 +96,7 @@
 }
 
 @media (max-width: 760px) {
-    .timeline-filters {
+    .filter-columns {
         grid-template-columns: 1fr;
     }
 }

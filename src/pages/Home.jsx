@@ -14,6 +14,7 @@ function Home({ onLogout, onAddDate }) {
   const [activeScopes, setActiveScopes] = useState(EVENT_OPTIONS.map((event) => event.id))
   const [activeTypes, setActiveTypes] = useState([])
   const [onlyMine, setOnlyMine] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     Promise.all([getCurrentProfile(), getTimelineDates()])
@@ -58,7 +59,14 @@ function Home({ onLogout, onAddDate }) {
     const scopeMatches = activeScopes.length === 0 || activeScopes.includes(item.scope_id)
     const typeMatches = activeTypes.length === 0 || activeTypes.includes(item.date_type)
     const mineMatches = !onlyMine || item.owner_id === profile?.id
-    return scopeMatches && typeMatches && mineMatches
+    const searchMatches = !searchQuery.trim() || [
+      item.title,
+      item.location,
+      item.notes,
+      item.date_type,
+    ].some((value) => String(value || '').toLowerCase().includes(searchQuery.trim().toLowerCase()))
+
+    return scopeMatches && typeMatches && mineMatches && searchMatches
   })
 
   return (
@@ -82,6 +90,8 @@ function Home({ onLogout, onAddDate }) {
           onToggleType={toggleType}
           onlyMine={onlyMine}
           onOnlyMineChange={setOnlyMine}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
         />
 
         {loading ? (
