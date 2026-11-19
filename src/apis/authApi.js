@@ -91,7 +91,10 @@ export async function getCurrentProfile() {
         .maybeSingle()
 
     if (error) throw error
-    return data
+    return data ? {
+        ...data,
+        id: userId
+    } : null
 }
 
 export async function logoutAccount() {

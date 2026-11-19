@@ -66,7 +66,9 @@ function Home({ onLogout, onAddDate }) {
   const visibleDates = dates.filter((item) => {
     const scopeMatches = activeScopes.length === 0 || activeScopes.includes(item.scope_id)
     const typeMatches = activeTypes.length === 0 || activeTypes.includes(item.date_type)
-    const mineMatches = !onlyMine || item.owner_id === profile?.id
+    const mineMatches = !onlyMine || (
+      Array.isArray(item.organizer_ids) && item.organizer_ids.includes(profile?.id)
+    )
     const searchMatches = !searchQuery.trim() || [
       item.title,
       item.location,
