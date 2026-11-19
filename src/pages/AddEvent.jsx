@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
-import { getEvents } from '../apis/eventsApi'
 import { createTimelineDates } from '../apis/timelineDatesApi'
-import { EVENT_TYPES, DEPARTMENT_TYPES } from '../constants/timelineOptions'
+import { EVENT_OPTIONS, EVENT_TYPES, DEPARTMENT_TYPES } from '../constants/timelineOptions'
 import TimelineHeader from '../components/TimelineHeader'
 import { supabase } from '../lib/supabase'
 import './AddEvent.css'
@@ -18,7 +17,6 @@ function addWeeks(dateString, weeks) {
 function AddEvent({ onBack, onCreated, initialScope }) {
   const [scopeType, setScopeType] = useState(initialScope?.scopeType || 'event')
   const [scopeId, setScopeId] = useState(initialScope?.scopeId || '')
-  const [events, setEvents] = useState([])
   const [departments, setDepartments] = useState([])
   const [dateType, setDateType] = useState('')
   const [title, setTitle] = useState('')
@@ -33,11 +31,10 @@ function AddEvent({ onBack, onCreated, initialScope }) {
   const [status, setStatus] = useState({ type: '', message: '' })
 
   useEffect(() => {
-    getEvents().then(setEvents).catch(() => setEvents([]))
     supabase?.from('departments').select('id, name, color').then(({ data }) => setDepartments(data || []))
   }, [])
 
-  const scopes = scopeType === 'event' ? events : departments
+  const scopes = scopeType === 'event' ? EVENT_OPTIONS : departments
   const scopeName = scopes.find((scope) => scope.id === scopeId)?.title
     || scopes.find((scope) => scope.id === scopeId)?.name
     || ''
