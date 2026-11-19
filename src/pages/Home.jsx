@@ -11,7 +11,7 @@ function Home({ onLogout, onAddDate }) {
   const [profile, setProfile] = useState(null)
   const [dates, setDates] = useState([])
   const [loading, setLoading] = useState(true)
-  const [activeScopes, setActiveScopes] = useState(EVENT_OPTIONS.map((event) => event.id))
+  const [activeScopes, setActiveScopes] = useState([])
   const [activeTypes, setActiveTypes] = useState([])
   const [onlyMine, setOnlyMine] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -33,7 +33,7 @@ function Home({ onLogout, onAddDate }) {
 
   function clearAllFilters() {
     setSearchQuery('')
-    setActiveScopes(EVENT_OPTIONS.map((event) => event.id))
+    setActiveScopes([])
     setActiveTypes([])
     setOnlyMine(false)
   }
