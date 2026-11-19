@@ -32,7 +32,9 @@ export async function createTimelineDates(rows) {
 
     if (sessionError) throw sessionError
 
-    const ownerId = sessionData ? .session ? .user ? .id
+    const ownerId = sessionData && sessionData.session ?
+        sessionData.session.user.id :
+        null
     if (!ownerId) throw new Error('You must be signed in to add a date.')
 
     const repeatGroupId = rows.length > 1 ? crypto.randomUUID() : null
