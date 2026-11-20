@@ -277,7 +277,7 @@
 
 .availability-actions {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 6px;
     margin-top: 14px;
 }
@@ -289,6 +289,23 @@
     background: var(--timeline-bg);
     color: var(--timeline-text);
     cursor: pointer;
+}
+
+.availability-actions button:disabled {
+    cursor: wait;
+    opacity: .6;
+}
+
+.availability-actions .available-button {
+    border-color: #4a9b70;
+    background: #edf8f0;
+    color: #267345;
+}
+
+.availability-actions .unavailable-button {
+    border-color: #d47770;
+    background: #fff1ef;
+    color: #a33b32;
 }
 
 .availability-actions button.active {
@@ -329,6 +346,49 @@
 
 .detail-delete-button {
     color: #b84b42;
+}
+
+.availability-summary {
+    display: grid;
+    gap: 8px;
+    margin-top: 14px;
+    border-top: 1px solid var(--timeline-border);
+    padding-top: 12px;
+    color: var(--timeline-muted);
+    font-size: 12px;
+}
+
+.availability-summary>strong {
+    color: var(--timeline-text);
+    font-size: 13px;
+}
+
+.availability-user-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+}
+
+.availability-user-group>span:first-child {
+    width: 100%;
+    font-weight: 800;
+}
+
+.availability-user {
+    border: 1px solid var(--timeline-border);
+    border-radius: 999px;
+    padding: 4px 8px;
+    background: var(--timeline-surface);
+    color: var(--timeline-text);
+}
+
+.available-users>span:first-child {
+    color: #267345;
+}
+
+.unavailable-users>span:first-child {
+    color: #a33b32;
 }
 
 .delete-confirmation {

@@ -14,6 +14,7 @@ import {
 import './GeneralTimeline.css'
 import { supabase } from '../lib/supabase'
 import { deleteTimelineDate } from '../apis/timelineDatesApi'
+import { getDateAvailability, setDateAvailability } from '../apis/availabilityApi'
 
 const PILL_WIDTH = 190
 const PILL_GAP = 10
@@ -46,6 +47,8 @@ function GeneralTimeline({ items, scopes, onQuickAdd }) {
   const [pixelsPerDay, setPixelsPerDay] = useState(8)
   const [selectedItem, setSelectedItem] = useState(null)
   const [availability, setAvailability] = useState({})
+  const [availabilityUsers, setAvailabilityUsers] = useState([])
+  const [availabilityLoading, setAvailabilityLoading] = useState(false)
   const [profiles, setProfiles] = useState([])
   const [deleteConfirmId, setDeleteConfirmId] = useState(null)
   const scrollRef = useRef(null)
@@ -125,6 +128,42 @@ function GeneralTimeline({ items, scopes, onQuickAdd }) {
     return scopes.find((scope) => scope.id === item.scope_id)
   }
 
+  function supportsAvailability(item) {
+    return String(item.date_type || '').toLowerCase() !== 'submission'
+  }
+
+  async function openDateDetails(item) {
+    setSelectedItem(item)
+    if (!supportsAvailability(item)) return
+
+    setAvailabilityLoading(true)
+    try {
+      const responses = await getDateAvailability(item.id)
+      const responseByUser = Object.fromEntries(responses.map((response) => [response.user_id, response.status]))
+      setAvailability(responseByUser)
+      setAvailabilityUsers(responses)
+    } catch (error) {
+      console.error('Unable to load availability:', error)
+      setAvailability({})
+      setAvailabilityUsers([])
+    } finally {
+      setAvailabilityLoading(false)
+    }
+  }
+
+  async function updateAvailability(item, status) {
+    try {
+      const response = await setDateAvailability(item.id, status)
+      setAvailability((current) => ({ ...current, [response.user_id]: response.status }))
+      setAvailabilityUsers((current) => [
+        ...current.filter((entry) => entry.user_id !== response.user_id),
+        response,
+      ])
+    } catch (error) {
+      console.error('Unable to save availability:', error)
+    }
+  }
+
   function handleDelete(item) {
     if (deleteConfirmId === item.id) {
       deleteTimelineDate(item.id)
@@ -194,7 +233,7 @@ function GeneralTimeline({ items, scopes, onQuickAdd }) {
                       '--pill-event': event?.color || item.color || '#26776d',
                     }}
                     title={`${item.title} — ${format(item.parsedDate, 'dd MMM yyyy')} — ${item.date_type}`}
-                    onClick={() => setSelectedItem(item)}
+                    onClick={() => openDateDetails(item)}
                   >
                     <span className="pill-icon">{getIcon(item.date_type)}</span>
                     <span className="pill-copy">
@@ -242,18 +281,45 @@ function GeneralTimeline({ items, scopes, onQuickAdd }) {
               </div>
             )}
           </dl>
-          <div className="availability-actions">
-            {[['available', 'Available'], ['maybe', 'Maybe'], ['unavailable', 'Unavailable']].map(([key, label]) => (
-              <button
-                type="button"
-                key={key}
-                className={availability[selectedItem.id] === key ? 'active' : ''}
-                onClick={() => setAvailability((current) => ({ ...current, [selectedItem.id]: key }))}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          {supportsAvailability(selectedItem) && (
+            <>
+              <div className="availability-actions">
+                <button
+                  type="button"
+                  className="available-button"
+                  disabled={availabilityLoading}
+                  onClick={() => updateAvailability(selectedItem, 'available')}
+                >
+                  Available
+                </button>
+                <button
+                  type="button"
+                  className="unavailable-button"
+                  disabled={availabilityLoading}
+                  onClick={() => updateAvailability(selectedItem, 'unavailable')}
+                >
+                  Unavailable
+                </button>
+              </div>
+              <div className="availability-summary">
+                <strong>Availability</strong>
+                <div className="availability-user-group available-users">
+                  <span>Can make it</span>
+                  {availabilityUsers.filter((entry) => entry.status === 'available').map((entry) => {
+                    const profile = profiles.find((item) => item.id === entry.user_id)
+                    return <span className="availability-user" key={entry.user_id}>{profile ? `${profile.first_name} ${profile.last_name}`.trim() : 'Member'}</span>
+                  })}
+                </div>
+                <div className="availability-user-group unavailable-users">
+                  <span>Cannot make it</span>
+                  {availabilityUsers.filter((entry) => entry.status === 'unavailable').map((entry) => {
+                    const profile = profiles.find((item) => item.id === entry.user_id)
+                    return <span className="availability-user" key={entry.user_id}>{profile ? `${profile.first_name} ${profile.last_name}`.trim() : 'Member'}</span>
+                  })}
+                </div>
+              </div>
+            </>
+          )}
           {onQuickAdd && (
             <div className="detail-action-row">
               <button type="button" className="detail-edit-button" onClick={() => onQuickAdd({
