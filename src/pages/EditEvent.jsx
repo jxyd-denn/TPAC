@@ -4,7 +4,7 @@ import { updateTimelineDate } from '../apis/timelineDatesApi'
 import { EVENT_OPTIONS, DEPARTMENT_OPTIONS, EVENT_TYPES, DEPARTMENT_TYPES } from '../constants/timelineOptions'
 import TimelineHeader from '../components/TimelineHeader'
 import SideMenu from '../components/SideMenu'
-import { supabase } from '../lib/supabase'
+import { getCurrentProfile, getProfiles } from '../apis/authApi'
 import './EditEvent.css'
 
 function addWeeks(dateString, weeks) {
@@ -13,6 +13,7 @@ function addWeeks(dateString, weeks) {
 
 function EditEvent({ editItem, onBack, onUpdated, onBackToAdd, onProfile, onNavigate }) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [currentProfile, setCurrentProfile] = useState(null)
   const [scopeType, setScopeType] = useState(editItem?.scope_type || 'event')
   const [scopeId, setScopeId] = useState(editItem?.scope_id || '')
   const [profiles, setProfiles] = useState([])
@@ -32,7 +33,8 @@ function EditEvent({ editItem, onBack, onUpdated, onBackToAdd, onProfile, onNavi
   const [status, setStatus] = useState({ type: '', message: '' })
 
   useEffect(() => {
-    supabase?.from('profiles').select('id, first_name, last_name').order('first_name').then(({ data }) => setProfiles(data || []))
+    getCurrentProfile().then(setCurrentProfile).catch(() => setCurrentProfile(null))
+    getProfiles().then(setProfiles).catch(() => setProfiles([]))
   }, [])
 
   const scopes = scopeType === 'event' ? EVENT_OPTIONS : DEPARTMENT_OPTIONS
@@ -96,7 +98,7 @@ function EditEvent({ editItem, onBack, onUpdated, onBackToAdd, onProfile, onNavi
 
   return (
     <main className="edit-event-page">
-      <TimelineHeader initials="TN" onAddDate={onBackToAdd} onProfile={onProfile} onMenu={() => setMenuOpen(true)} onLogout={onBack} />
+      <TimelineHeader initials={`${currentProfile?.first_name?.[0] || ''}${currentProfile?.last_name?.[0] || ''}`.toUpperCase() || 'TP'} avatarUrl={currentProfile?.avatar_url} onAddDate={onBackToAdd} onProfile={onProfile} onMenu={() => setMenuOpen(true)} onLogout={onBack} />
       <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} onNavigate={(destination) => { setMenuOpen(false); onNavigate?.(destination) }} />
       <section className="edit-event-form-wrap">
         <button type="button" className="edit-back-button" onClick={onBack}>← Back to timeline</button>

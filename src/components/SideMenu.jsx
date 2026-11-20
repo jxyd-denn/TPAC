@@ -10,10 +10,10 @@ function SideMenu({ open, onClose, onNavigate }) {
           <button type="button" className="side-menu-close" onClick={onClose} aria-label="Close menu">×</button>
         </div>
         <nav className="side-menu-links">
-          <button type="button" onClick={() => onNavigate('timeline')}>Timeline</button>
-          <button type="button" onClick={() => onNavigate('task-manager')}>Task manager</button>
-          <button type="button" onClick={() => onNavigate('settings')}>Settings</button>
-          <button type="button" onClick={() => onNavigate('timetree')}>To TimeTree calendar</button>
+          <button type="button" onClick={() => onNavigate('timeline')}><span className="menu-option-icon" aria-hidden="true">▥</span>Timeline</button>
+          <button type="button" onClick={() => onNavigate('task-manager')}><span className="menu-option-icon" aria-hidden="true">☑</span>Task manager</button>
+          <button type="button" onClick={() => onNavigate('settings')}><span className="menu-option-icon" aria-hidden="true">⚙</span>Settings</button>
+          <button type="button" onClick={() => onNavigate('timetree')}><span className="menu-option-icon" aria-hidden="true">▣</span>To TimeTree calendar</button>
         </nav>
       </aside>
     </>

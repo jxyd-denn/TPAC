@@ -12,9 +12,9 @@ import {
   startOfMonth,
 } from 'date-fns'
 import './GeneralTimeline.css'
-import { supabase } from '../lib/supabase'
 import { deleteTimelineDate } from '../apis/timelineDatesApi'
 import { getDateAvailability, setDateAvailability } from '../apis/availabilityApi'
+import { getProfiles } from '../apis/authApi'
 
 const PILL_WIDTH = 190
 const PILL_GAP = 10
@@ -54,9 +54,7 @@ function GeneralTimeline({ items, scopes, onQuickAdd }) {
   const scrollRef = useRef(null)
 
   useEffect(() => {
-    supabase?.from('profiles')
-      .select('id, first_name, last_name')
-      .then(({ data }) => setProfiles(data || []))
+    getProfiles().then(setProfiles).catch(() => setProfiles([]))
   }, [])
 
   const parsedItems = useMemo(() => items.map((item) => {
@@ -271,7 +269,9 @@ function GeneralTimeline({ items, scopes, onQuickAdd }) {
                         const name = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Unnamed member'
                         return (
                           <span className="organizer-name-card" key={profile.id}>
-                            <span className="organizer-card-avatar">{`${profile.first_name?.[0] || ''}${profile.last_name?.[0] || ''}`.toUpperCase()}</span>
+                            <span className="organizer-card-avatar">
+                              {profile.avatar_url ? <img src={profile.avatar_url} alt="" /> : `${profile.first_name?.[0] || ''}${profile.last_name?.[0] || ''}`.toUpperCase()}
+                            </span>
                             {name}
                           </span>
                         )

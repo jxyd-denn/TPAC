@@ -105,6 +105,27 @@ export async function getCurrentProfile() {
     } : null
 }
 
+export async function getProfiles() {
+    const client = requireSupabase()
+    let {
+        data,
+        error
+    } = await client
+        .from('profiles')
+        .select('id, first_name, last_name, avatar_url')
+        .order('first_name')
+
+    if (error) {
+        const fallback = await client
+            .from('profiles')
+            .select('id, first_name, last_name')
+            .order('first_name')
+        if (fallback.error) throw fallback.error
+        data = fallback.data
+    }
+    return data || []
+}
+
 export async function updateProfile({
     firstName,
     lastName,
