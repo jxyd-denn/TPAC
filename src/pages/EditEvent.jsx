@@ -10,7 +10,7 @@ function addWeeks(dateString, weeks) {
   return format(addDays(parseISO(dateString), weeks * 7), 'yyyy-MM-dd')
 }
 
-function EditEvent({ editItem, onBack, onUpdated, onBackToAdd }) {
+function EditEvent({ editItem, onBack, onUpdated, onBackToAdd, onProfile, onMenu }) {
   const [scopeType, setScopeType] = useState(editItem?.scope_type || 'event')
   const [scopeId, setScopeId] = useState(editItem?.scope_id || '')
   const [profiles, setProfiles] = useState([])
@@ -94,7 +94,7 @@ function EditEvent({ editItem, onBack, onUpdated, onBackToAdd }) {
 
   return (
     <main className="edit-event-page">
-      <TimelineHeader initials="TN" onAddDate={onBackToAdd} onLogout={onBack} />
+      <TimelineHeader initials="TN" onAddDate={onBackToAdd} onProfile={onProfile} onMenu={onMenu} onLogout={onBack} />
       <section className="edit-event-form-wrap">
         <button type="button" className="edit-back-button" onClick={onBack}>← Back to timeline</button>
         <p className="edit-page-kicker">Edit event</p>

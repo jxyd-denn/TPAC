@@ -4,6 +4,8 @@ import Register from './pages/Register'
 import Home from './pages/Home'
 import AddEvent from './pages/AddEvent'
 import EditEvent from './pages/EditEvent'
+import Profile from './pages/Profile'
+import PlaceholderPage from './pages/PlaceholderPage'
 import { getCurrentSession } from './apis/authApi'
 
 function App() {
@@ -34,6 +36,8 @@ function App() {
             setAppPage('timeline')
           }}
           initialScope={initialScope}
+          onProfile={() => setAppPage('profile')}
+          onMenu={(destination) => setAppPage(destination)}
         />
       )
     }
@@ -52,13 +56,30 @@ function App() {
             setEditItem(null)
             setAppPage('add-event')
           }}
+          onProfile={() => setAppPage('profile')}
+          onMenu={(destination) => setAppPage(destination)}
           onUpdated={() => {
             setInitialScope(null)
             setEditItem(null)
             setAppPage('timeline')
           }}
+          onBackToProfile={() => setAppPage('profile')}
+          onMenu={() => setAppPage('settings')}
         />
       )
+    }
+
+    if (appPage === 'profile') {
+      return <Profile onBack={() => setAppPage('timeline')} onLogout={() => setAuthenticated(false)} />
+    }
+
+    if (appPage === 'task-manager' || appPage === 'settings' || appPage === 'timetree') {
+      const pages = {
+        'task-manager': ['Task manager', 'Shared tasks will live here.'],
+        settings: ['Settings', 'Workspace settings will live here.'],
+        timetree: ['TimeTree calendar', 'TimeTree integration will live here.'],
+      }
+      return <PlaceholderPage title={pages[appPage][0]} description={pages[appPage][1]} onBack={() => setAppPage('timeline')} onProfile={() => setAppPage('profile')} onMenu={(destination) => setAppPage(destination)} />
     }
 
     return (
@@ -75,6 +96,8 @@ function App() {
           setEditItem(null)
           setAppPage('add-event')
         }}
+        onProfile={() => setAppPage('profile')}
+        onNavigate={(destination) => setAppPage(destination)}
       />
     )
   }

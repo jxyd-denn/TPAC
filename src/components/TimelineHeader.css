@@ -55,6 +55,17 @@
     cursor: pointer;
 }
 
+.menu-button {
+    width: 38px;
+    height: 38px;
+    border: 1px solid #dfe7e2;
+    border-radius: 9px;
+    background: white;
+    color: #26776d;
+    font-size: 19px;
+    cursor: pointer;
+}
+
 @media (max-width: 620px) {
     .timeline-header {
         height: 64px;

@@ -5,10 +5,11 @@ import TimelineHeader from '../components/TimelineHeader'
 import TimelineFilters from '../components/TimelineFilters'
 import SwimlaneTimeline from '../components/SwimlaneTimeline'
 import GeneralTimeline from '../components/GeneralTimeline'
+import SideMenu from '../components/SideMenu'
 import { EVENT_OPTIONS, DEPARTMENT_OPTIONS, EVENT_TYPES, DEPARTMENT_TYPES } from '../constants/timelineOptions'
 import './Home.css'
 
-function Home({ onLogout, onAddDate }) {
+function Home({ onLogout, onAddDate, onProfile, onNavigate }) {
   const [profile, setProfile] = useState(null)
   const [dates, setDates] = useState([])
   const [loading, setLoading] = useState(true)
@@ -17,6 +18,7 @@ function Home({ onLogout, onAddDate }) {
   const [activeTypes, setActiveTypes] = useState([])
   const [onlyMine, setOnlyMine] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     Promise.all([getCurrentProfile(), getTimelineDates()])
@@ -97,7 +99,8 @@ function Home({ onLogout, onAddDate }) {
 
   return (
     <main className="home-page">
-      <TimelineHeader initials={initials} onAddDate={() => onAddDate?.()} onLogout={handleLogout} />
+      <TimelineHeader initials={initials} onAddDate={() => onAddDate?.()} onProfile={onProfile} onLogout={handleLogout} onMenu={() => setMenuOpen(true)} />
+      <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} onNavigate={(destination) => { setMenuOpen(false); onNavigate?.(destination) }} />
 
       <section className="timeline-content">
         <div className="timeline-heading">

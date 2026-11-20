@@ -1,6 +1,6 @@
 import './TimelineHeader.css'
 
-function TimelineHeader({ initials = 'TP', onAddDate, onLogout }) {
+function TimelineHeader({ initials = 'TP', onAddDate, onLogout, onProfile, onMenu }) {
   return (
     <header className="timeline-header">
       <div className="timeline-brand">
@@ -9,7 +9,8 @@ function TimelineHeader({ initials = 'TP', onAddDate, onLogout }) {
       </div>
       <div className="header-actions">
         <button type="button" className="add-event-button" onClick={onAddDate}>+ Add date</button>
-        <button type="button" className="header-avatar" onClick={onLogout} aria-label="Log out">{initials}</button>
+        <button type="button" className="header-avatar" onClick={onProfile || onLogout} aria-label="Open profile">{initials}</button>
+        <button type="button" className="menu-button" onClick={onMenu} aria-label="Open menu">☰</button>
       </div>
     </header>
   )

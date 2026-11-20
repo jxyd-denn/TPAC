@@ -81,20 +81,90 @@ export async function getCurrentProfile() {
 
     if (!userId) return null
 
+    let { data, error } = await client
+        .from('profiles')
+        .select('id, first_name, last_name, club_role, avatar_url, created_at')
+        .eq('id', userId)
+        .maybeSingle()
+
+    if (error) {
+        const fallback = await client
+            .from('profiles')
+            .select('id, first_name, last_name, club_role, created_at')
+            .eq('id', userId)
+            .maybeSingle()
+        if (fallback.error) throw fallback.error
+        data = fallback.data
+    }
+    return data ? {
+        ...data,
+        id: userId
+    } : null
+}
+
+export async function updateProfile({
+    firstName,
+    lastName,
+    avatarUrl
+}) {
+    const client = requireSupabase()
+    const {
+        data: sessionData,
+        error: sessionError
+    } = await client.auth.getSession()
+    if (sessionError) throw sessionError
+    const userId = sessionData && sessionData.session ?
+        sessionData.session.user.id :
+        null
+    if (!userId) throw new Error('You must be signed in to update your profile.')
+
     const {
         data,
         error
     } = await client
         .from('profiles')
-        .select('id, first_name, last_name, club_role, created_at')
+        .update({
+            first_name: firstName,
+            last_name: lastName,
+            avatar_url: avatarUrl || null,
+            updated_at: new Date().toISOString()
+        })
         .eq('id', userId)
-        .maybeSingle()
+        .select('id, first_name, last_name, club_role, avatar_url, created_at')
+        .single()
 
     if (error) throw error
-    return data ? {
-        ...data,
-        id: userId
-    } : null
+    return data
+}
+
+export async function uploadProfileAvatar(file) {
+    const client = requireSupabase()
+    const {
+        data: sessionData,
+        error: sessionError
+    } = await client.auth.getSession()
+    if (sessionError) throw sessionError
+    const userId = sessionData && sessionData.session ?
+        sessionData.session.user.id :
+        null
+    if (!userId) throw new Error('You must be signed in to upload a picture.')
+
+    const path = `${userId}/${crypto.randomUUID()}-${file.name}`
+    const {
+        error: uploadError
+    } = await client.storage.from('avatars').upload(path, file, {
+        upsert: false
+    })
+    if (uploadError) throw uploadError
+    return client.storage.from('avatars').getPublicUrl(path).data.publicUrl
+}
+
+export async function deleteAccount() {
+    const client = requireSupabase()
+    const {
+        error
+    } = await client.rpc('delete_current_account')
+    if (error) throw error
 }
 
 export async function logoutAccount() {

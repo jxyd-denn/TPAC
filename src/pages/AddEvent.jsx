@@ -10,7 +10,7 @@ function addWeeks(dateString, weeks) {
   return format(addDays(parseISO(dateString), weeks * 7), 'yyyy-MM-dd')
 }
 
-function AddEvent({ onBack, onCreated, initialScope }) {
+function AddEvent({ onBack, onCreated, initialScope, onProfile, onMenu }) {
   const [scopeType, setScopeType] = useState(initialScope?.scopeType || 'event')
   const [scopeId, setScopeId] = useState(initialScope?.scopeId || '')
   const [profiles, setProfiles] = useState([])
@@ -105,7 +105,7 @@ function AddEvent({ onBack, onCreated, initialScope }) {
 
   return (
     <main className="add-event-page">
-      <TimelineHeader initials="TN" onAddDate={undefined} onLogout={onBack} />
+      <TimelineHeader initials="TN" onAddDate={undefined} onProfile={onProfile} onMenu={onMenu} onLogout={onBack} />
       <section className="event-form-wrap">
         <button type="button" className="back-button" onClick={onBack}>← Back to timeline</button>
         <p className="page-kicker">Add a date</p>
