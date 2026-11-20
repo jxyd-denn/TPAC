@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react'
 import { deleteAccount, getCurrentProfile, logoutAccount, updateProfile, uploadProfileAvatar } from '../apis/authApi'
 import TimelineHeader from '../components/TimelineHeader'
+import SideMenu from '../components/SideMenu'
 import './Profile.css'
 
-function Profile({ onBack, onLogout }) {
+function Profile({ onBack, onLogout, onAddDate, onNavigate, onProfile }) {
   const [profile, setProfile] = useState(null)
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [avatarUrl, setAvatarUrl] = useState('')
   const [status, setStatus] = useState({ type: '', message: '' })
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     getCurrentProfile().then((data) => {
@@ -62,7 +64,15 @@ function Profile({ onBack, onLogout }) {
 
   return (
     <main className="profile-page">
-      <TimelineHeader initials="" onAddDate={undefined} onLogout={handleLogout} onProfile={undefined} onMenu={undefined} />
+      <TimelineHeader
+        initials={`${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase() || 'TP'}
+        avatarUrl={avatarUrl}
+        onAddDate={onAddDate}
+        onLogout={handleLogout}
+        onProfile={onProfile}
+        onMenu={() => setMenuOpen(true)}
+      />
+      <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} onNavigate={(destination) => { setMenuOpen(false); onNavigate?.(destination) }} />
       <section className="profile-content">
         <button type="button" className="profile-back" onClick={onBack}>← Back to timeline</button>
         <p className="profile-kicker">Account</p>

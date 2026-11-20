@@ -81,7 +81,10 @@ export async function getCurrentProfile() {
 
     if (!userId) return null
 
-    let { data, error } = await client
+    let {
+        data,
+        error
+    } = await client
         .from('profiles')
         .select('id, first_name, last_name, club_role, avatar_url, created_at')
         .eq('id', userId)

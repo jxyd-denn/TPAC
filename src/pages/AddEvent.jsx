@@ -3,6 +3,7 @@ import { addDays, format, parseISO } from 'date-fns'
 import { createTimelineDates } from '../apis/timelineDatesApi'
 import { EVENT_OPTIONS, DEPARTMENT_OPTIONS, EVENT_TYPES, DEPARTMENT_TYPES } from '../constants/timelineOptions'
 import TimelineHeader from '../components/TimelineHeader'
+import SideMenu from '../components/SideMenu'
 import { supabase } from '../lib/supabase'
 import './AddEvent.css'
 
@@ -10,7 +11,8 @@ function addWeeks(dateString, weeks) {
   return format(addDays(parseISO(dateString), weeks * 7), 'yyyy-MM-dd')
 }
 
-function AddEvent({ onBack, onCreated, initialScope, onProfile, onMenu }) {
+function AddEvent({ onBack, onCreated, initialScope, onProfile, onNavigate }) {
+  const [menuOpen, setMenuOpen] = useState(false)
   const [scopeType, setScopeType] = useState(initialScope?.scopeType || 'event')
   const [scopeId, setScopeId] = useState(initialScope?.scopeId || '')
   const [profiles, setProfiles] = useState([])
@@ -105,7 +107,8 @@ function AddEvent({ onBack, onCreated, initialScope, onProfile, onMenu }) {
 
   return (
     <main className="add-event-page">
-      <TimelineHeader initials="TN" onAddDate={undefined} onProfile={onProfile} onMenu={onMenu} onLogout={onBack} />
+      <TimelineHeader initials="TN" onAddDate={undefined} onProfile={onProfile} onMenu={() => setMenuOpen(true)} onLogout={onBack} />
+      <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} onNavigate={(destination) => { setMenuOpen(false); onNavigate?.(destination) }} />
       <section className="event-form-wrap">
         <button type="button" className="back-button" onClick={onBack}>← Back to timeline</button>
         <p className="page-kicker">Add a date</p>

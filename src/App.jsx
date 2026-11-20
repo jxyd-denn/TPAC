@@ -37,7 +37,7 @@ function App() {
           }}
           initialScope={initialScope}
           onProfile={() => setAppPage('profile')}
-          onMenu={(destination) => setAppPage(destination)}
+          onNavigate={(destination) => setAppPage(destination)}
         />
       )
     }
@@ -57,20 +57,26 @@ function App() {
             setAppPage('add-event')
           }}
           onProfile={() => setAppPage('profile')}
-          onMenu={(destination) => setAppPage(destination)}
+          onNavigate={(destination) => setAppPage(destination)}
           onUpdated={() => {
             setInitialScope(null)
             setEditItem(null)
             setAppPage('timeline')
           }}
-          onBackToProfile={() => setAppPage('profile')}
-          onMenu={() => setAppPage('settings')}
         />
       )
     }
 
     if (appPage === 'profile') {
-      return <Profile onBack={() => setAppPage('timeline')} onLogout={() => setAuthenticated(false)} />
+      return (
+        <Profile
+          onBack={() => setAppPage('timeline')}
+          onLogout={() => setAuthenticated(false)}
+          onAddDate={() => setAppPage('add-event')}
+          onNavigate={(destination) => setAppPage(destination)}
+          onProfile={() => setAppPage('profile')}
+        />
+      )
     }
 
     if (appPage === 'task-manager' || appPage === 'settings' || appPage === 'timetree') {
@@ -79,7 +85,17 @@ function App() {
         settings: ['Settings', 'Workspace settings will live here.'],
         timetree: ['TimeTree calendar', 'TimeTree integration will live here.'],
       }
-      return <PlaceholderPage title={pages[appPage][0]} description={pages[appPage][1]} onBack={() => setAppPage('timeline')} onProfile={() => setAppPage('profile')} onMenu={(destination) => setAppPage(destination)} />
+      return (
+        <PlaceholderPage
+          title={pages[appPage][0]}
+          description={pages[appPage][1]}
+          initials="TP"
+          onBack={() => setAppPage('timeline')}
+          onAddDate={() => setAppPage('add-event')}
+          onProfile={() => setAppPage('profile')}
+          onNavigate={(destination) => setAppPage(destination)}
+        />
+      )
     }
 
     return (

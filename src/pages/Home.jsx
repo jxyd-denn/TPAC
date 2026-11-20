@@ -99,7 +99,7 @@ function Home({ onLogout, onAddDate, onProfile, onNavigate }) {
 
   return (
     <main className="home-page">
-      <TimelineHeader initials={initials} onAddDate={() => onAddDate?.()} onProfile={onProfile} onLogout={handleLogout} onMenu={() => setMenuOpen(true)} />
+      <TimelineHeader initials={initials} avatarUrl={profile?.avatar_url} onAddDate={() => onAddDate?.()} onProfile={onProfile} onLogout={handleLogout} onMenu={() => setMenuOpen(true)} />
       <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} onNavigate={(destination) => { setMenuOpen(false); onNavigate?.(destination) }} />
 
       <section className="timeline-content">
